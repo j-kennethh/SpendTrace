@@ -50,42 +50,42 @@
 @layer base {
   :root {
     /* Background: Off-White (#f8fafc) */
-    --background: 210 40% 98%;
-    --foreground: 215 28% 17%;
+    --background: hsl(210 40% 98%);
+    --foreground: hsl(215 28% 17%);
 
     /* Card Background: Pure White */
-    --card: 0 0% 100%;
-    --card-foreground: 215 28% 17%;
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(215 28% 17%);
 
     /* Popover/Modal Background */
-    --popover: 0 0% 100%;
-    --popover-foreground: 215 28% 17%;
+    --popover: hsl(0 0% 100%);
+    --popover-foreground: hsl(215 28% 17%);
 
     /* Primary: Deep Emerald (#059669) */
-    --primary: 161 94% 30%;
-    --primary-foreground: 210 40% 98%;
+    --primary: hsl(161 94% 30%);  /* <--- This was the main culprit */
+    --primary-foreground: hsl(210 40% 98%);
 
     /* Secondary: Sage Green (#d1fae5) used for accents */
-    --secondary: 152 76% 90%;
-    --secondary-foreground: 161 94% 30%;
+    --secondary: hsl(152 76% 90%);
+    --secondary-foreground: hsl(161 94% 30%);
 
     /* Muted: Gray for secondary text */
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: hsl(210 40% 96.1%);
+    --muted-foreground: hsl(215.4 16.3% 46.9%);
 
     /* Accent: For hover states */
-    --accent: 152 76% 96%;
-    --accent-foreground: 161 94% 30%;
+    --accent: hsl(152 76% 96%);
+    --accent-foreground: hsl(161 94% 30%);
 
     /* Danger: Red for "Over Budget" */
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: hsl(0 84.2% 60.2%);
+    --destructive-foreground: hsl(210 40% 98%);
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 161 94% 30%; /* Focus ring matches Primary */
+    --border: hsl(214.3 31.8% 91.4%);
+    --input: hsl(214.3 31.8% 91.4%);
+    --ring: hsl(161 94% 30%); 
 
-    --radius: 0.75rem; /* Slightly rounder corners for that "Mobile App" feel */
+    --radius: 0.75rem; 
   }
 }
 
