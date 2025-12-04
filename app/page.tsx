@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress"
 import { Plus, LogOut, Wallet } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { seedCategories } from './actions'
+import AddExpenseModal from '@/components/AddExpenseModal'
 
 export default async function Dashboard() {
   const supabase = await createClient()
@@ -148,13 +149,8 @@ export default async function Dashboard() {
            )}
         </div>
       </main>
-
-      {/* FLOATING ACTION BUTTON (Mobile Style) */}
-      <div className="fixed bottom-6 right-6">
-        <Button className="h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary/90">
-          <Plus className="h-6 w-6" />
-        </Button>
-      </div>
+      {/* Pass the fetched categories to the modal */}
+      <AddExpenseModal categories={categories || []} />
     </div>
   )
 }

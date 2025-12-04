@@ -30,3 +30,34 @@ export async function seedCategories(_formData: FormData) {
   // 4. Refresh the Dashboard immediately to show new data
   revalidatePath('/')
 }
+
+export async function addExpense(formData: FormData) {
+  const supabase = await createClient()
+
+  // 1. Get User
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
+
+  // 2. Extract Data from Form
+  const amount = formData.get('amount')
+  const description = formData.get('description')
+  const category_id = formData.get('category')
+  const date = formData.get('date')
+
+  // 3. Insert into Supabase
+  const { error } = await supabase.from('expenses').insert({
+    user_id: user.id,
+    amount: amount,
+    description: description,
+    category_id: category_id,
+    date: date
+  })
+
+  if (error) {
+    console.error('Error adding expense:', error)
+    return
+  }
+
+  // 4. Refresh Data
+  revalidatePath('/')
+}
