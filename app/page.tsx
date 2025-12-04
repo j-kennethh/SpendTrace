@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { seedCategories } from './actions'
 import AddExpenseModal from '@/components/AddExpenseModal'
 import TransactionItem from '@/components/TransactionItem'
+import CategoryCard from '@/components/CategoryCard'
 
 export default async function Dashboard() {
   const supabase = await createClient()
@@ -26,7 +27,7 @@ export default async function Dashboard() {
 
   // 3. Fetch Expenses for this month
   const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
-  
+
   const { data: expenses } = await supabase
     .from('expenses')
     .select('*')
@@ -38,7 +39,7 @@ export default async function Dashboard() {
   // 4. Calculate Totals & Group by Category
   const totalSpent = expenses?.reduce((sum, item) => sum + Number(item.amount), 0) || 0
   const monthlyBudget = categories?.reduce((sum, item) => sum + Number(item.monthly_budget), 0) || 0
-  
+
   // Create a map of { category_id: total_spent }
   const spendByCategory: Record<number, number> = {}
   expenses?.forEach((expense) => {
@@ -61,14 +62,14 @@ export default async function Dashboard() {
           <p className="text-xs text-muted-foreground">December 2025</p>
         </div>
         <form action="/auth/signout" method="post">
-           <Button variant="ghost" size="icon">
-             <LogOut className="h-5 w-5 text-muted-foreground" />
-           </Button>
+          <Button variant="ghost" size="icon">
+            <LogOut className="h-5 w-5 text-muted-foreground" />
+          </Button>
         </form>
       </header>
 
       <main className="p-6 space-y-6">
-        
+
         {/* HERO CARD: Total Spent */}
         <Card className="bg-primary text-primary-foreground border-none shadow-xl">
           <CardContent>
@@ -85,8 +86,8 @@ export default async function Dashboard() {
                 <span>${monthlyBudget.toFixed(2)} Limit</span>
               </div>
               <div className="h-2 w-full bg-black/20 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-white rounded-full transition-all duration-500" 
+                <div
+                  className="h-full bg-white rounded-full transition-all duration-500"
                   style={{ width: `${Math.min(progressPercentage, 100)}%` }}
                 />
               </div>
@@ -97,50 +98,17 @@ export default async function Dashboard() {
         {/* CATEGORIES / BUDGETS LIST */}
         <div>
           <h2 className="text-lg font-semibold mb-3 text-foreground">Budgets</h2>
-          
+
           {categories && categories.length > 0 ? (
             <div className="space-y-3">
               {categories.map((cat) => {
-                // Calculate individual progress
                 const spent = spendByCategory[cat.id] || 0
-                const budget = Number(cat.monthly_budget)
-                const percent = budget > 0 ? (spent / budget) * 100 : 0
-                
-                // Color logic: Green normally, Red if over budget
-                const isOverBudget = spent > budget
-                const progressColor = isOverBudget ? "bg-destructive" : "bg-primary"
-
                 return (
-                  <Card key={cat.id} className="overflow-hidden shadow-sm">
-                    <CardContent className="p-4">
-                      <div className="flex justify-between items-center mb-2">
-                        <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-full bg-secondary/50 flex items-center justify-center text-xl">
-                            {cat.icon || '📂'}
-                          </div>
-                          <div>
-                            <span className="font-medium block">{cat.name}</span>
-                            <span className="text-xs text-muted-foreground">
-                               ${(budget - spent).toFixed(2)} left
-                            </span>
-                          </div>
-                        </div>
-                        <span className="text-sm font-semibold">
-                          ${spent.toFixed(2)} <span className="text-muted-foreground font-normal">/ ${budget}</span>
-                        </span>
-                      </div>
-                      
-                      {/* Progress Bar with Dynamic Color */}
-                      <Progress 
-                        value={percent} 
-                        className="h-2" 
-                        // We use a custom style override or utility class for the indicator color if needed
-                        // But standard Shadcn Progress uses 'bg-primary' for the indicator.
-                        // To change color based on budget, we can conditionally wrap or style it.
-                        indicatorClassName={isOverBudget ? "bg-destructive" : ""}
-                      />
-                    </CardContent>
-                  </Card>
+                  <CategoryCard
+                    key={cat.id}
+                    category={cat}
+                    spent={spent}
+                  />
                 )
               })}
             </div>
@@ -156,7 +124,7 @@ export default async function Dashboard() {
                   Create your first category to start tracking your student life expenses.
                 </p>
                 <form action={seedCategories}>
-                   <Button variant="outline" type="submit">Create Default Categories</Button>
+                  <Button variant="outline" type="submit">Create Default Categories</Button>
                 </form>
               </CardContent>
             </Card>
@@ -166,23 +134,23 @@ export default async function Dashboard() {
         {/* RECENT TRANSACTIONS */}
         <div className="pb-20">
           <h2 className="text-lg font-semibold mb-3 text-foreground">Recent Transactions</h2>
-           {expenses && expenses.length > 0 ? (
-             <div className="space-y-2">
-               {expenses.map((expense) => {
+          {expenses && expenses.length > 0 ? (
+            <div className="space-y-2">
+              {expenses.map((expense) => {
                 const cat = categories?.find(c => c.id === expense.category_id)
                 return (
-                  <TransactionItem 
-                    key={expense.id} 
-                    expense={expense} 
+                  <TransactionItem
+                    key={expense.id}
+                    expense={expense}
                     category={cat}
                     allCategories={categories || []}
                   />
                 )
               })}
-             </div>
-           ) : (
-             <p className="text-sm text-muted-foreground text-center py-4">No recent transactions.</p>
-           )}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-4">No recent transactions.</p>
+          )}
         </div>
       </main>
 
