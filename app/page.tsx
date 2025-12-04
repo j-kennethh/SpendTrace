@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Plus, LogOut, Wallet } from 'lucide-react'
 import { Button } from "@/components/ui/button"
+import { seedCategories } from './actions'
 
 export default async function Dashboard() {
   const supabase = await createClient()
@@ -118,7 +119,10 @@ export default async function Dashboard() {
                 <p className="text-sm text-muted-foreground mb-4 max-w-[200px]">
                   Create your first category to start tracking your expenses.
                 </p>
-                <Button variant="outline">Create Default Categories</Button>
+                {/* UPDATED BUTTON WRAPPED IN FORM */}
+                <form action={seedCategories}>
+                  <Button variant="outline" type="submit">Create Default Categories</Button>
+                </form>
               </CardContent>
             </Card>
           )}
