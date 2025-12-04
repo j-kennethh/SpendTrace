@@ -1,8 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { Plus, LogOut, Wallet } from 'lucide-react'
+import { Wallet, LogOut } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { seedCategories } from './actions'
 import AddExpenseModal from '@/components/AddExpenseModal'
@@ -21,6 +21,7 @@ export default async function Dashboard() {
     .from('categories')
     .select('*')
     .eq('user_id', user.id)
+    .order('id', { ascending: true })
 
   // 3. Fetch Expenses for this month
   const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
@@ -32,15 +33,26 @@ export default async function Dashboard() {
     .gte('date', startOfMonth)
     .order('date', { ascending: false })
 
-  // 4. Calculate Totals
+  // --- NEW LOGIC START ---
+  // 4. Calculate Totals & Group by Category
   const totalSpent = expenses?.reduce((sum, item) => sum + Number(item.amount), 0) || 0
-  const monthlyBudget = categories?.reduce((sum, item) => sum + Number(item.monthly_budget), 0) || 0 // Simple sum of all category budgets
+  const monthlyBudget = categories?.reduce((sum, item) => sum + Number(item.monthly_budget), 0) || 0
   
-  // Calculate progress (Avoid division by zero)
+  // Create a map of { category_id: total_spent }
+  const spendByCategory: Record<number, number> = {}
+  expenses?.forEach((expense) => {
+    const catId = expense.category_id
+    if (catId) {
+      spendByCategory[catId] = (spendByCategory[catId] || 0) + Number(expense.amount)
+    }
+  })
+  // --- NEW LOGIC END ---
+
+  // Calculate overall progress
   const progressPercentage = monthlyBudget > 0 ? (totalSpent / monthlyBudget) * 100 : 0
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-24">
       {/* HEADER */}
       <header className="flex items-center justify-between p-6 bg-card shadow-sm sticky top-0 z-10">
         <div>
@@ -71,7 +83,6 @@ export default async function Dashboard() {
                 <span>{progressPercentage.toFixed(0)}% of Budget</span>
                 <span>${monthlyBudget.toFixed(2)} Limit</span>
               </div>
-              {/* Custom White Progress Bar for Contrast */}
               <div className="h-2 w-full bg-black/20 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-white rounded-full transition-all duration-500" 
@@ -88,26 +99,49 @@ export default async function Dashboard() {
           
           {categories && categories.length > 0 ? (
             <div className="space-y-3">
-              {categories.map((cat) => (
-                <Card key={cat.id} className="overflow-hidden">
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">{cat.icon || '📂'}</span>
-                        <span className="font-medium">{cat.name}</span>
+              {categories.map((cat) => {
+                // Calculate individual progress
+                const spent = spendByCategory[cat.id] || 0
+                const budget = Number(cat.monthly_budget)
+                const percent = budget > 0 ? (spent / budget) * 100 : 0
+                
+                // Color logic: Green normally, Red if over budget
+                const isOverBudget = spent > budget
+                const progressColor = isOverBudget ? "bg-destructive" : "bg-primary"
+
+                return (
+                  <Card key={cat.id} className="overflow-hidden shadow-sm">
+                    <CardContent className="p-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-full bg-secondary/50 flex items-center justify-center text-xl">
+                            {cat.icon || '📂'}
+                          </div>
+                          <div>
+                            <span className="font-medium block">{cat.name}</span>
+                            <span className="text-xs text-muted-foreground">
+                               ${(budget - spent).toFixed(2)} left
+                            </span>
+                          </div>
+                        </div>
+                        <span className="text-sm font-semibold">
+                          ${spent.toFixed(2)} <span className="text-muted-foreground font-normal">/ ${budget}</span>
+                        </span>
                       </div>
-                      <span className="text-sm text-muted-foreground">
-                        ${cat.monthly_budget}
-                      </span>
-                    </div>
-                    {/* Placeholder for individual category progress - we will add this logic later */}
-                    <Progress value={0} className="h-2" />
-                    <p className="text-xs text-muted-foreground mt-1 text-right">
-                      $0.00 spent
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
+                      
+                      {/* Progress Bar with Dynamic Color */}
+                      <Progress 
+                        value={percent} 
+                        className="h-2" 
+                        // We use a custom style override or utility class for the indicator color if needed
+                        // But standard Shadcn Progress uses 'bg-primary' for the indicator.
+                        // To change color based on budget, we can conditionally wrap or style it.
+                        indicatorClassName={isOverBudget ? "bg-destructive" : ""}
+                      />
+                    </CardContent>
+                  </Card>
+                )
+              })}
             </div>
           ) : (
             // EMPTY STATE
@@ -118,11 +152,10 @@ export default async function Dashboard() {
                 </div>
                 <h3 className="font-semibold text-lg">No Budgets Yet</h3>
                 <p className="text-sm text-muted-foreground mb-4 max-w-[200px]">
-                  Create your first category to start tracking your expenses.
+                  Create your first category to start tracking your student life expenses.
                 </p>
-                {/* UPDATED BUTTON WRAPPED IN FORM */}
                 <form action={seedCategories}>
-                  <Button variant="outline" type="submit">Create Default Categories</Button>
+                   <Button variant="outline" type="submit">Create Default Categories</Button>
                 </form>
               </CardContent>
             </Card>
@@ -130,26 +163,36 @@ export default async function Dashboard() {
         </div>
 
         {/* RECENT TRANSACTIONS */}
-        <div>
-          <h2 className="text-lg font-semibold mb-3 text-foreground">Recent</h2>
+        <div className="pb-20">
+          <h2 className="text-lg font-semibold mb-3 text-foreground">Recent Transactions</h2>
            {expenses && expenses.length > 0 ? (
              <div className="space-y-2">
-               {expenses.map((expense) => (
-                 <div key={expense.id} className="flex items-center justify-between p-3 bg-card rounded-lg border">
-                   <div className="flex flex-col">
-                     <span className="font-medium">{expense.description}</span>
-                     <span className="text-xs text-muted-foreground">{expense.date}</span>
+               {expenses.map((expense) => {
+                 // Find category icon for the transaction
+                 const cat = categories?.find(c => c.id === expense.category_id)
+                 return (
+                   <div key={expense.id} className="flex items-center justify-between p-4 bg-card rounded-xl border shadow-sm">
+                     <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-full bg-secondary/30 flex items-center justify-center text-sm">
+                          {cat?.icon || '💸'}
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-medium text-sm">{expense.description}</span>
+                          <span className="text-xs text-muted-foreground">{new Date(expense.date).toLocaleDateString()}</span>
+                        </div>
+                     </div>
+                     <span className="font-bold text-foreground">-${Number(expense.amount).toFixed(2)}</span>
                    </div>
-                   <span className="font-bold text-foreground">-${expense.amount}</span>
-                 </div>
-               ))}
+                 )
+               })}
              </div>
            ) : (
              <p className="text-sm text-muted-foreground text-center py-4">No recent transactions.</p>
            )}
         </div>
       </main>
-      {/* Pass the fetched categories to the modal */}
+
+      {/* MODAL */}
       <AddExpenseModal categories={categories || []} />
     </div>
   )
