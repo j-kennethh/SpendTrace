@@ -61,3 +61,52 @@ export async function addExpense(formData: FormData) {
   // 4. Refresh Data
   revalidatePath('/')
 }
+
+export async function deleteExpense(id: number) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
+
+  const { error } = await supabase
+    .from('expenses')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id) // Security: Ensure user owns the expense
+
+  if (error) {
+    console.error('Error deleting expense:', error)
+    return
+  }
+
+  revalidatePath('/')
+}
+
+export async function updateExpense(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
+
+  const id = formData.get('id')
+  const amount = formData.get('amount')
+  const description = formData.get('description')
+  const category_id = formData.get('category')
+  const date = formData.get('date')
+
+  const { error } = await supabase
+    .from('expenses')
+    .update({
+      amount,
+      description,
+      category_id,
+      date
+    })
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) {
+    console.error('Error updating expense:', error)
+    return
+  }
+
+  revalidatePath('/')
+}

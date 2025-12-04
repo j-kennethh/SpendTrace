@@ -6,6 +6,7 @@ import { Wallet, LogOut } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { seedCategories } from './actions'
 import AddExpenseModal from '@/components/AddExpenseModal'
+import TransactionItem from '@/components/TransactionItem'
 
 export default async function Dashboard() {
   const supabase = await createClient()
@@ -168,23 +169,16 @@ export default async function Dashboard() {
            {expenses && expenses.length > 0 ? (
              <div className="space-y-2">
                {expenses.map((expense) => {
-                 // Find category icon for the transaction
-                 const cat = categories?.find(c => c.id === expense.category_id)
-                 return (
-                   <div key={expense.id} className="flex items-center justify-between p-4 bg-card rounded-xl border shadow-sm">
-                     <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-full bg-secondary/30 flex items-center justify-center text-sm">
-                          {cat?.icon || '💸'}
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="font-medium text-sm">{expense.description}</span>
-                          <span className="text-xs text-muted-foreground">{new Date(expense.date).toLocaleDateString()}</span>
-                        </div>
-                     </div>
-                     <span className="font-bold text-foreground">-${Number(expense.amount).toFixed(2)}</span>
-                   </div>
-                 )
-               })}
+                const cat = categories?.find(c => c.id === expense.category_id)
+                return (
+                  <TransactionItem 
+                    key={expense.id} 
+                    expense={expense} 
+                    category={cat}
+                    allCategories={categories || []}
+                  />
+                )
+              })}
              </div>
            ) : (
              <p className="text-sm text-muted-foreground text-center py-4">No recent transactions.</p>
