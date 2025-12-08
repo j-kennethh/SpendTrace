@@ -1,13 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Card, CardContent } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 import { Wallet, LogOut } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { seedCategories } from './actions'
 import AddExpenseModal from '@/components/AddExpenseModal'
-import TransactionItem from '@/components/TransactionItem'
 import CategoryCard from '@/components/CategoryCard'
+import TransactionList from '@/components/TransactionList'
 
 export default async function Dashboard() {
   const supabase = await createClient()
@@ -25,7 +24,7 @@ export default async function Dashboard() {
     .eq('user_id', user.id)
     .order('id', { ascending: true })
 
-  // 3. Fetch Expenses for this month
+  // 3. Fetch ALL Expenses for this month (for correct totals & client-side pagination)
   const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
 
   const { data: expenses } = await supabase
@@ -34,6 +33,7 @@ export default async function Dashboard() {
     .eq('user_id', user.id)
     .gte('date', startOfMonth)
     .order('date', { ascending: false })
+    .order('id', { ascending: false })
 
   // --- NEW LOGIC START ---
   // 4. Calculate Totals & Group by Category
@@ -134,23 +134,10 @@ export default async function Dashboard() {
         {/* RECENT TRANSACTIONS */}
         <div className="pb-20">
           <h2 className="text-lg font-semibold mb-3 text-foreground">Recent Transactions</h2>
-          {expenses && expenses.length > 0 ? (
-            <div className="space-y-2">
-              {expenses.map((expense) => {
-                const cat = categories?.find(c => c.id === expense.category_id)
-                return (
-                  <TransactionItem
-                    key={expense.id}
-                    expense={expense}
-                    category={cat}
-                    allCategories={categories || []}
-                  />
-                )
-              })}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground text-center py-4">No recent transactions.</p>
-          )}
+          <TransactionList
+            expenses={expenses || []}
+            categories={categories || []}
+          />
         </div>
       </main>
 
