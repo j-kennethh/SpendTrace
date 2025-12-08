@@ -12,12 +12,12 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select"
 import { Plus, Loader2 } from 'lucide-react'
 import { addExpense } from '@/app/actions'
@@ -56,36 +56,36 @@ export default function AddExpenseModal({ categories }: { categories: Category[]
         <DialogHeader>
           <DialogTitle>Add New Expense</DialogTitle>
         </DialogHeader>
-        
+
         <form action={handleSubmit} className="grid gap-4 py-4">
-          
+
+          {/* Description Input */}
+          <div className="grid gap-2">
+            <Label htmlFor="description">Description</Label>
+            <Input
+              id="description"
+              name="description"
+              placeholder="e.g. Lunch at Canteen"
+              required
+              autoFocus
+            />
+          </div>
+
           {/* Amount Input */}
           <div className="grid gap-2">
             <Label htmlFor="amount">Amount</Label>
             <div className="relative">
               <span className="absolute left-3 top-1.5 text-muted-foreground">$</span>
-              <Input 
-                id="amount" 
-                name="amount" 
-                type="number" 
-                step="0.01" 
-                placeholder="0.00" 
-                className="pl-7" 
-                required 
-                autoFocus
+              <Input
+                id="amount"
+                name="amount"
+                type="number"
+                step="0.01"
+                placeholder="0.00"
+                className="pl-7"
+                required
               />
             </div>
-          </div>
-
-          {/* Description Input */}
-          <div className="grid gap-2">
-            <Label htmlFor="description">Description</Label>
-            <Input 
-              id="description" 
-              name="description" 
-              placeholder="e.g. Lunch at Canteen" 
-              required 
-            />
           </div>
 
           {/* Category Select */}
@@ -109,11 +109,11 @@ export default function AddExpenseModal({ categories }: { categories: Category[]
           {/* Date Picker (Native is best for mobile) */}
           <div className="grid gap-2">
             <Label htmlFor="date">Date</Label>
-            <Input 
-              id="date" 
-              name="date" 
-              type="date" 
-              required 
+            <Input
+              id="date"
+              name="date"
+              type="date"
+              required
               defaultValue={new Date().toISOString().split('T')[0]} // Default to today
             />
           </div>

@@ -59,7 +59,9 @@ export default async function Dashboard() {
       <header className="flex items-center justify-between p-6 bg-card shadow-sm sticky top-0 z-10">
         <div>
           <h1 className="text-xl font-bold text-primary">SpendTrace</h1>
-          <p className="text-xs text-muted-foreground">December 2025</p>
+          <p className="text-xs text-muted-foreground">
+            {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+          </p>
         </div>
         <form action="/auth/signout" method="post">
           <Button variant="ghost" size="icon">

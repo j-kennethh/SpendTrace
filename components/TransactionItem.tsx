@@ -18,12 +18,12 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select"
 import { deleteExpense, updateExpense } from '@/app/actions'
 
@@ -41,14 +41,14 @@ type Expense = {
   category_id: number | null
 }
 
-export default function TransactionItem({ 
-  expense, 
-  category, 
-  allCategories 
-}: { 
-  expense: Expense, 
-  category?: Category, 
-  allCategories: Category[] 
+export default function TransactionItem({
+  expense,
+  category,
+  allCategories
+}: {
+  expense: Expense,
+  category?: Category,
+  allCategories: Category[]
 }) {
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -80,10 +80,10 @@ export default function TransactionItem({
             <span className="text-xs text-muted-foreground">{new Date(expense.date).toLocaleDateString()}</span>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <span className="font-bold text-foreground">-${Number(expense.amount).toFixed(2)}</span>
-          
+
           {/* Dropdown Menu for Actions */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -111,31 +111,31 @@ export default function TransactionItem({
           </DialogHeader>
           <form action={handleUpdate} className="grid gap-4 py-4">
             <input type="hidden" name="id" value={expense.id} />
-            
+
+            <div className="grid gap-2">
+              <Label htmlFor="description">Description</Label>
+              <Input
+                id="description"
+                name="description"
+                defaultValue={expense.description || ''}
+                required
+              />
+            </div>
+
             <div className="grid gap-2">
               <Label htmlFor="amount">Amount</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1.5 text-muted-foreground">$</span>
-                <Input 
-                  id="amount" 
-                  name="amount" 
-                  type="number" 
-                  step="0.01" 
+                <Input
+                  id="amount"
+                  name="amount"
+                  type="number"
+                  step="0.01"
                   defaultValue={expense.amount}
-                  className="pl-7" 
-                  required 
+                  className="pl-7"
+                  required
                 />
               </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
-              <Input 
-                id="description" 
-                name="description" 
-                defaultValue={expense.description || ''}
-                required 
-              />
             </div>
 
             <div className="grid gap-2">
@@ -157,11 +157,11 @@ export default function TransactionItem({
 
             <div className="grid gap-2">
               <Label htmlFor="date">Date</Label>
-              <Input 
-                id="date" 
-                name="date" 
-                type="date" 
-                required 
+              <Input
+                id="date"
+                name="date"
+                type="date"
+                required
                 defaultValue={expense.date}
               />
             </div>

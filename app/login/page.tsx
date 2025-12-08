@@ -60,12 +60,12 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-lg border-muted">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center text-primary">
-            {isSignUp ? 'Create an account' : 'Welcome back'}
+            {isSignUp ? 'SpendTrace' : 'SpendTrace'}
           </CardTitle>
           <CardDescription className="text-center">
             {isSignUp 
-              ? 'Enter your email to create your SpendTrace account' 
-              : 'Enter your email to sign in to your account'}
+              ? 'Track your expenses, create your account!' 
+              : 'Welcome back, log in to your account!'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -75,7 +75,7 @@ export default function LoginPage() {
               <Input 
                 id="email" 
                 type="email" 
-                placeholder="student@university.edu" 
+                placeholder="" 
                 required 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -106,7 +106,7 @@ export default function LoginPage() {
 
             <Button className="w-full font-bold" type="submit" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isSignUp ? 'Sign Up' : 'Sign In'}
+              {isSignUp ? 'Sign Up' : 'Log In'}
             </Button>
           </form>
         </CardContent>
@@ -117,7 +117,7 @@ export default function LoginPage() {
               onClick={() => setIsSignUp(!isSignUp)} 
               className="ml-1 text-primary hover:underline font-medium focus:outline-none"
             >
-              {isSignUp ? 'Sign In' : 'Sign Up'}
+              {isSignUp ? 'Log In' : 'Sign Up'}
             </button>
           </div>
         </CardFooter>
