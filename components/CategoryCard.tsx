@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { updateCategoryBudget } from '@/app/actions'
+import { updateCategory } from '@/app/actions'
 
 type Category = {
   id: number
@@ -23,12 +23,12 @@ type Category = {
   monthly_budget: number
 }
 
-export default function CategoryCard({ 
-  category, 
-  spent 
-}: { 
+export default function CategoryCard({
+  category,
+  spent
+}: {
   category: Category
-  spent: number 
+  spent: number
 }) {
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -39,7 +39,7 @@ export default function CategoryCard({
 
   async function handleUpdate(formData: FormData) {
     setIsLoading(true)
-    await updateCategoryBudget(formData)
+    await updateCategory(formData)
     setIsLoading(false)
     setIsEditOpen(false)
   }
@@ -56,7 +56,7 @@ export default function CategoryCard({
               <div>
                 <span className="font-medium block">{category.name}</span>
                 <span className="text-xs text-muted-foreground">
-                   ${(budget - spent).toFixed(2)} left
+                  ${(budget - spent).toFixed(2)} left
                 </span>
               </div>
             </div>
@@ -64,9 +64,9 @@ export default function CategoryCard({
               <span className="text-sm font-semibold">
                 ${spent.toFixed(2)} <span className="text-muted-foreground font-normal">/ ${budget}</span>
               </span>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={() => setIsEditOpen(true)}
               >
@@ -74,10 +74,10 @@ export default function CategoryCard({
               </Button>
             </div>
           </div>
-          
-          <Progress 
-            value={percent} 
-            className="h-2" 
+
+          <Progress
+            value={percent}
+            className="h-2"
             indicatorClassName={isOverBudget ? "bg-destructive" : ""}
           />
         </CardContent>
@@ -86,24 +86,45 @@ export default function CategoryCard({
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit Budget for {category.name}</DialogTitle>
+            <DialogTitle>Edit Category: {category.name}</DialogTitle>
           </DialogHeader>
           <form action={handleUpdate} className="grid gap-4 py-4">
             <input type="hidden" name="id" value={category.id} />
-            
+
+            <div className="grid gap-2">
+              <Label htmlFor="icon">Icon</Label>
+              <Input
+                id="icon"
+                name="icon"
+                defaultValue={category.icon || ''}
+                placeholder=""
+                className="text-2xl h-12 w-16 text-center"
+                maxLength={2}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                name="name"
+                defaultValue={category.name}
+                required
+              />
+            </div>
+
             <div className="grid gap-2">
               <Label htmlFor="monthly_budget">Monthly Budget</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1.5 text-muted-foreground">$</span>
-                <Input 
-                  id="monthly_budget" 
-                  name="monthly_budget" 
-                  type="number" 
-                  step="0.01" 
+                <Input
+                  id="monthly_budget"
+                  name="monthly_budget"
+                  type="number"
+                  step="0.01"
                   defaultValue={budget}
-                  className="pl-7" 
-                  required 
-                  autoFocus
+                  className="pl-7"
+                  required
                 />
               </div>
             </div>
@@ -111,7 +132,7 @@ export default function CategoryCard({
             <DialogFooter>
               <Button type="submit" disabled={isLoading} className="w-full">
                 {isLoading ? <Loader2 className="animate-spin mr-2" /> : null}
-                Save Budget
+                Save Changes
               </Button>
             </DialogFooter>
           </form>

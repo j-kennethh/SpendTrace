@@ -111,22 +111,28 @@ export async function updateExpense(formData: FormData) {
   revalidatePath('/')
 }
 
-export async function updateCategoryBudget(formData: FormData) {
+export async function updateCategory(formData: FormData) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return
 
   const id = formData.get('id')
+  const name = formData.get('name')
+  const icon = formData.get('icon')
   const monthly_budget = formData.get('monthly_budget')
 
   const { error } = await supabase
     .from('categories')
-    .update({ monthly_budget })
+    .update({ 
+      name,
+      icon,
+      monthly_budget 
+    })
     .eq('id', id)
     .eq('user_id', user.id)
 
   if (error) {
-    console.error('Error updating category budget:', error)
+    console.error('Error updating category:', error)
     return
   }
 
