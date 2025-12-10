@@ -12,11 +12,9 @@ export async function seedCategories(_formData: FormData) {
 
   // 2. Define Default Student Categories
   const defaults = [
-    { user_id: user.id, name: 'Food', icon: '🍴', monthly_budget: 200, sort_order: 0 },
+    { user_id: user.id, name: 'Food', icon: '🍴', monthly_budget: 300, sort_order: 0 },
     { user_id: user.id, name: 'Transport', icon: '🚌', monthly_budget: 100, sort_order: 1 },
-    { user_id: user.id, name: 'Personal', icon: '🧴', monthly_budget: 50, sort_order: 2 },
-    { user_id: user.id, name: 'School', icon: '📚', monthly_budget: 50, sort_order: 3 },
-    { user_id: user.id, name: 'Leisure', icon: '🎉', monthly_budget: 100, sort_order: 4 },
+    { user_id: user.id, name: 'Leisure', icon: '🎉', monthly_budget: 200, sort_order: 2 },
   ]
 
   // 3. Insert into Supabase
