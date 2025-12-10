@@ -81,6 +81,7 @@ export default function AddExpenseModal({ categories }: { categories: Category[]
                 name="amount"
                 type="number"
                 step="0.01"
+                min="0"
                 placeholder="0.00"
                 className="pl-7"
                 required

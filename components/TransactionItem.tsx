@@ -131,6 +131,7 @@ export default function TransactionItem({
                   name="amount"
                   type="number"
                   step="0.01"
+                  min="0"
                   defaultValue={expense.amount}
                   className="pl-7"
                   required

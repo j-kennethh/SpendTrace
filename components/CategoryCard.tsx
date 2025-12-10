@@ -173,6 +173,7 @@ export default function CategoryCard({
                   name="monthly_budget"
                   type="number"
                   step="0.01"
+                  min="0"
                   defaultValue={budget}
                   className="pl-7"
                   required
