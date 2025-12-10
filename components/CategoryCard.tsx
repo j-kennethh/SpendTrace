@@ -121,7 +121,7 @@ export default function CategoryCard({
 
           <Progress
             value={percent}
-            className="h-2"
+            className={`h-2 ${dragProps ? 'ml-8 w-[calc(100%-2.5rem)]' : ''}`}
             indicatorClassName={isOverBudget ? "bg-destructive" : ""}
           />
         </CardContent>

@@ -79,7 +79,6 @@ export default async function Dashboard() {
           <CardContent>
             <div className="flex justify-between items-start mb-2">
               <span className="text-primary-foreground/80 text-sm font-medium">Total Spent</span>
-              <Wallet className="h-5 w-5 opacity-80" />
             </div>
             <div className="text-4xl font-bold mb-4">
               ${totalSpent.toFixed(2)}
@@ -118,7 +117,7 @@ export default async function Dashboard() {
                 </div>
                 <h3 className="font-semibold text-lg">No Budgets Yet</h3>
                 <p className="text-sm text-muted-foreground mb-4 max-w-[200px]">
-                  Create your first category to start tracking your student life expenses.
+                  Create your first category to start tracking your expenses.
                 </p>
                 <form action={seedCategories}>
                   <Button variant="outline" type="submit">Create Default Categories</Button>
