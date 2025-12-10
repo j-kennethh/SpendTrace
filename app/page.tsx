@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button"
 import { seedCategories } from './actions'
 import AddExpenseModal from '@/components/AddExpenseModal'
 import CreateCategoryModal from '@/components/CreateCategoryModal'
-import CategoryCard from '@/components/CategoryCard'
-import TransactionList from '@/components/TransactionList'
+import CategoryList from '@/components/CategoryList'
+import TransactionList from '@/components/TransactionList' // Was missing in previous broken edit
 
 export default async function Dashboard() {
   const supabase = await createClient()
@@ -18,12 +18,13 @@ export default async function Dashboard() {
     redirect('/login')
   }
 
-  // 2. Fetch Categories
+  // 2. Fetch Categories (Ordered by sort_order now)
   const { data: categories } = await supabase
     .from('categories')
     .select('*')
     .eq('user_id', user.id)
-    .order('id', { ascending: true })
+    .order('sort_order', { ascending: true })
+    .order('id', { ascending: true }) // Fallback for old categories
 
   // 3. Fetch ALL Expenses for this month (for correct totals & client-side pagination)
   const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
@@ -105,21 +106,11 @@ export default async function Dashboard() {
             <CreateCategoryModal />
           </div>
 
-          {categories && categories.length > 0 ? (
-            <div className="space-y-3">
-              {categories.map((cat) => {
-                const spent = spendByCategory[cat.id] || 0
-                return (
-                  <CategoryCard
-                    key={cat.id}
-                    category={cat}
-                    spent={spent}
-                  />
-                )
-              })}
-            </div>
-          ) : (
-            // EMPTY STATE
+          <CategoryList
+            categories={categories || []}
+            spendByCategory={spendByCategory}
+          >
+            {/* Empty State */}
             <Card className="border-dashed border-2 shadow-none">
               <CardContent className="flex flex-col items-center justify-center py-10 text-center">
                 <div className="h-12 w-12 bg-secondary rounded-full flex items-center justify-center mb-4">
@@ -134,7 +125,7 @@ export default async function Dashboard() {
                 </form>
               </CardContent>
             </Card>
-          )}
+          </CategoryList>
         </div>
 
         {/* RECENT TRANSACTIONS */}

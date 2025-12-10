@@ -12,11 +12,11 @@ export async function seedCategories(_formData: FormData) {
 
   // 2. Define Default Student Categories
   const defaults = [
-    { user_id: user.id, name: 'Food', icon: '🍴', monthly_budget: 200 },
-    { user_id: user.id, name: 'Transport', icon: '🚌', monthly_budget: 100 },
-    { user_id: user.id, name: 'Personal', icon: '🧴', monthly_budget: 50 },
-    { user_id: user.id, name: 'School', icon: '📚', monthly_budget: 50 },
-    { user_id: user.id, name: 'Leisure', icon: '🎉', monthly_budget: 100 },
+    { user_id: user.id, name: 'Food', icon: '🍴', monthly_budget: 200, sort_order: 0 },
+    { user_id: user.id, name: 'Transport', icon: '🚌', monthly_budget: 100, sort_order: 1 },
+    { user_id: user.id, name: 'Personal', icon: '🧴', monthly_budget: 50, sort_order: 2 },
+    { user_id: user.id, name: 'School', icon: '📚', monthly_budget: 50, sort_order: 3 },
+    { user_id: user.id, name: 'Leisure', icon: '🎉', monthly_budget: 100, sort_order: 4 },
   ]
 
   // 3. Insert into Supabase
@@ -148,11 +148,23 @@ export async function createCategory(formData: FormData) {
   const icon = formData.get('icon')
   const monthly_budget = formData.get('monthly_budget')
 
+  // Get max sort_order
+  const { data: maxOrderData } = await supabase
+    .from('categories')
+    .select('sort_order')
+    .eq('user_id', user.id)
+    .order('sort_order', { ascending: false })
+    .limit(1)
+    .single()
+
+  const nextOrder = (maxOrderData?.sort_order ?? -1) + 1
+
   const { error } = await supabase.from('categories').insert({
     user_id: user.id,
     name,
     icon,
-    monthly_budget
+    monthly_budget,
+    sort_order: nextOrder
   })
 
   if (error) {
@@ -198,4 +210,22 @@ export async function deleteCategory(id: number) {
 
   revalidatePath('/')
   return { error: null }
+}
+
+export async function updateCategoryOrder(orderedIds: number[]) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
+
+  // Update loop
+  const updates = orderedIds.map((id, index) =>
+    supabase
+      .from('categories')
+      .update({ sort_order: index })
+      .eq('id', id)
+      .eq('user_id', user.id)
+  )
+
+  await Promise.all(updates)
+  revalidatePath('/')
 }

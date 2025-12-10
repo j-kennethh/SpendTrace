@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
-import { Pencil, Loader2, Trash2, MoreHorizontal } from 'lucide-react'
+import { Pencil, Loader2, Trash2, MoreHorizontal, GripVertical } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -32,10 +32,15 @@ type Category = {
 
 export default function CategoryCard({
   category,
-  spent
+  spent,
+  dragProps
 }: {
   category: Category
   spent: number
+  dragProps?: {
+    attributes: any
+    listeners: any
+  }
 }) {
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -72,6 +77,15 @@ export default function CategoryCard({
         <CardContent className="p-4">
           <div className="flex justify-between items-center mb-2">
             <div className="flex items-center gap-3">
+              {dragProps && (
+                <div
+                  {...dragProps.attributes}
+                  {...dragProps.listeners}
+                  className="cursor-move text-muted-foreground/30 hover:text-muted-foreground transition-colors -ml-1"
+                >
+                  <GripVertical className="h-5 w-5" />
+                </div>
+              )}
               <div className="h-10 w-10 rounded-full bg-secondary/50 flex items-center justify-center text-xl">
                 {category.icon || '📂'}
               </div>
