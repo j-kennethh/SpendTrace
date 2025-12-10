@@ -14,7 +14,8 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { updateCategory } from '@/app/actions'
+import { updateCategory, deleteCategory } from '@/app/actions'
+import { Trash2 } from 'lucide-react'
 
 type Category = {
   id: number
@@ -32,6 +33,8 @@ export default function CategoryCard({
 }) {
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const budget = Number(category.monthly_budget)
   const percent = budget > 0 ? (spent / budget) * 100 : 0
@@ -39,9 +42,24 @@ export default function CategoryCard({
 
   async function handleUpdate(formData: FormData) {
     setIsLoading(true)
+    setError(null)
     await updateCategory(formData)
     setIsLoading(false)
     setIsEditOpen(false)
+  }
+
+  async function handleDelete() {
+    if (!confirm('Are you sure you want to delete this category?')) return
+    setIsDeleting(true)
+    setError(null)
+    const result = await deleteCategory(category.id)
+    setIsDeleting(false)
+
+    if (result?.error) {
+      setError(result.error)
+    } else {
+      setIsEditOpen(false)
+    }
   }
 
   return (
@@ -91,6 +109,12 @@ export default function CategoryCard({
           <form action={handleUpdate} className="grid gap-4 py-4">
             <input type="hidden" name="id" value={category.id} />
 
+            {error && (
+              <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">
+                {error}
+              </div>
+            )}
+
             <div className="grid gap-2">
               <Label htmlFor="icon">Icon</Label>
               <Input
@@ -129,8 +153,18 @@ export default function CategoryCard({
               </div>
             </div>
 
-            <DialogFooter>
-              <Button type="submit" disabled={isLoading} className="w-full">
+            <DialogFooter className="flex-col sm:justify-between gap-2">
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={isDeleting || isLoading}
+                className="w-full sm:w-auto"
+              >
+                {isDeleting ? <Loader2 className="animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
+                Delete
+              </Button>
+              <Button type="submit" disabled={isLoading || isDeleting} className="w-full sm:w-auto">
                 {isLoading ? <Loader2 className="animate-spin mr-2" /> : null}
                 Save Changes
               </Button>

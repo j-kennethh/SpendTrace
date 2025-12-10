@@ -5,6 +5,7 @@ import { Wallet, LogOut } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { seedCategories } from './actions'
 import AddExpenseModal from '@/components/AddExpenseModal'
+import CreateCategoryModal from '@/components/CreateCategoryModal'
 import CategoryCard from '@/components/CategoryCard'
 import TransactionList from '@/components/TransactionList'
 
@@ -99,7 +100,10 @@ export default async function Dashboard() {
 
         {/* CATEGORIES / BUDGETS LIST */}
         <div>
-          <h2 className="text-lg font-semibold mb-3 text-foreground">Budgets</h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-semibold text-foreground">Budgets</h2>
+            <CreateCategoryModal />
+          </div>
 
           {categories && categories.length > 0 ? (
             <div className="space-y-3">

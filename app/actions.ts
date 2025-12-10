@@ -123,10 +123,10 @@ export async function updateCategory(formData: FormData) {
 
   const { error } = await supabase
     .from('categories')
-    .update({ 
+    .update({
       name,
       icon,
-      monthly_budget 
+      monthly_budget
     })
     .eq('id', id)
     .eq('user_id', user.id)
@@ -137,4 +137,65 @@ export async function updateCategory(formData: FormData) {
   }
 
   revalidatePath('/')
+}
+
+export async function createCategory(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
+
+  const name = formData.get('name')
+  const icon = formData.get('icon')
+  const monthly_budget = formData.get('monthly_budget')
+
+  const { error } = await supabase.from('categories').insert({
+    user_id: user.id,
+    name,
+    icon,
+    monthly_budget
+  })
+
+  if (error) {
+    console.error('Error creating category:', error)
+    return
+  }
+
+  revalidatePath('/')
+}
+
+export async function deleteCategory(id: number) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'User not authenticated' }
+
+  // 1. Delete associated expenses first to avoid FK constraint errors
+  const { error: expenseError } = await supabase
+    .from('expenses')
+    .delete()
+    .eq('category_id', id)
+    .eq('user_id', user.id)
+
+  if (expenseError) {
+    console.error('Error deleting associated expenses:', expenseError)
+    return { error: `Error deleting expenses: ${expenseError.message}` }
+  }
+
+  // 2. Delete the category
+  const { error, count } = await supabase
+    .from('categories')
+    .delete({ count: 'exact' })
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) {
+    console.error('Error deleting category:', error)
+    return { error: `Error deleting category: ${error.message}` }
+  }
+
+  if (count === 0) {
+    return { error: 'Category not found or access denied' }
+  }
+
+  revalidatePath('/')
+  return { error: null }
 }
