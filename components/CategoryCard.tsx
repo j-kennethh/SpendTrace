@@ -1,10 +1,11 @@
+
 'use client'
 
 import { useState } from 'react'
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
-import { Pencil, Loader2 } from 'lucide-react'
+import { Pencil, Loader2, Trash2, MoreHorizontal } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -12,10 +13,15 @@ import {
   DialogTitle,
   DialogFooter
 } from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { updateCategory, deleteCategory } from '@/app/actions'
-import { Trash2 } from 'lucide-react'
 
 type Category = {
   id: number
@@ -56,9 +62,7 @@ export default function CategoryCard({
     setIsDeleting(false)
 
     if (result?.error) {
-      setError(result.error)
-    } else {
-      setIsEditOpen(false)
+      alert(result.error) // Fallback as modal might be closed
     }
   }
 
@@ -82,14 +86,22 @@ export default function CategoryCard({
               <span className="text-sm font-semibold">
                 ${spent.toFixed(2)} <span className="text-muted-foreground font-normal">/ ${budget}</span>
               </span>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => setIsEditOpen(true)}
-              >
-                <Pencil className="h-3 w-3 text-muted-foreground" />
-              </Button>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setIsEditOpen(true)}>
+                    <Pencil className="mr-2 h-4 w-4" /> Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleDelete} className="text-destructive focus:text-destructive">
+                    {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />} Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 
@@ -153,18 +165,8 @@ export default function CategoryCard({
               </div>
             </div>
 
-            <DialogFooter className="flex-col sm:justify-between gap-2">
-              <Button
-                type="button"
-                variant="destructive"
-                onClick={handleDelete}
-                disabled={isDeleting || isLoading}
-                className="w-full sm:w-auto"
-              >
-                {isDeleting ? <Loader2 className="animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
-                Delete
-              </Button>
-              <Button type="submit" disabled={isLoading || isDeleting} className="w-full sm:w-auto">
+            <DialogFooter>
+              <Button type="submit" disabled={isLoading} className="w-full">
                 {isLoading ? <Loader2 className="animate-spin mr-2" /> : null}
                 Save Changes
               </Button>
