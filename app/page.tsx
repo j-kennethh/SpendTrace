@@ -56,7 +56,7 @@ export default async function Dashboard() {
   const progressPercentage = monthlyBudget > 0 ? (totalSpent / monthlyBudget) * 100 : 0
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background">
       {/* HEADER */}
       <header className="flex items-center justify-between p-6 bg-card shadow-sm sticky top-0 z-10">
         <div>
@@ -128,7 +128,7 @@ export default async function Dashboard() {
         </div>
 
         {/* RECENT TRANSACTIONS */}
-        <div className="pb-20">
+        <div>
           <h2 className="text-lg font-semibold mb-3 text-foreground">Recent Transactions</h2>
           <TransactionList
             expenses={expenses || []}
