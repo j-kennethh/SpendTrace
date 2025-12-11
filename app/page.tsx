@@ -8,6 +8,7 @@ import AddExpenseModal from '@/components/AddExpenseModal'
 import CreateCategoryModal from '@/components/CreateCategoryModal'
 import CategoryList from '@/components/CategoryList'
 import TransactionList from '@/components/TransactionList' // Was missing in previous broken edit
+import { ModeToggle } from '@/components/ModeToggle'
 
 export default async function Dashboard() {
   const supabase = await createClient()
@@ -65,11 +66,14 @@ export default async function Dashboard() {
             {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
           </p>
         </div>
-        <form action="/auth/signout" method="post">
-          <Button variant="ghost" size="icon">
-            <LogOut className="h-5 w-5 text-muted-foreground" />
-          </Button>
-        </form>
+        <div className="flex items-center gap-2">
+          <ModeToggle />
+          <form action="/auth/signout" method="post">
+            <Button variant="ghost" size="icon" className="hover:bg-destructive/15 hover:text-destructive">
+              <LogOut className="h-5 w-5" />
+            </Button>
+          </form>
+        </div>
       </header>
 
       <main className="p-6 space-y-6">
@@ -90,7 +94,7 @@ export default async function Dashboard() {
               </div>
               <div className="h-2 w-full bg-black/20 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-white rounded-full transition-all duration-500"
+                  className="h-full bg-primary-foreground rounded-full transition-all duration-500"
                   style={{ width: `${Math.min(progressPercentage, 100)}%` }}
                 />
               </div>

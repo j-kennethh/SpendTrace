@@ -62,7 +62,8 @@
     --popover-foreground: hsl(215 28% 17%);
 
     /* Primary: Deep Emerald (#059669) */
-    --primary: hsl(161 94% 30%);  /* <--- This was the main culprit */
+    --primary: hsl(161 94% 30%);
+    /* <--- This was the main culprit */
     --primary-foreground: hsl(210 40% 98%);
 
     /* Secondary: Sage Green (#d1fae5) used for accents */
@@ -83,31 +84,53 @@
 
     --border: hsl(214.3 31.8% 91.4%);
     --input: hsl(214.3 31.8% 91.4%);
-    --ring: hsl(161 94% 30%); 
+    --ring: hsl(161 94% 30%);
 
-    --radius: 0.75rem; 
+    --radius: 0.75rem;
   }
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
+  /* Background: Deep Slate (Almost Black but softer) */
+  --background: hsl(222 47% 11%);
+  --foreground: hsl(210 40% 98%);
+
+  /* Card: Slightly lighter than background to create elevation */
+  --card: hsl(217 33% 17%);
+  --card-foreground: hsl(210 40% 98%);
+
+  /* Popover: Matches Card */
+  --popover: hsl(217 33% 17%);
+  --popover-foreground: hsl(210 40% 98%);
+
+  /* Primary: Bright Emerald (Lightened for visibility on dark bg) */
+  /* Note: We shifted Lightness from 30% -> 48% to make it "pop" */
+  --primary: hsl(161 70% 48%);
+  --primary-foreground: hsl(222 47% 11%);
+  /* Dark text on bright button */
+
+  /* Secondary: Dark Muted Green (Instead of pale sage) */
+  --secondary: hsl(161 30% 20%);
+  --secondary-foreground: hsl(152 76% 80%);
+
+  /* Muted: Dark Gray for secondary text */
+  --muted: hsl(217 33% 17%);
+  --muted-foreground: hsl(215 20% 65%);
+
+  /* Accent: Used for hover states on lists */
+  --accent: hsl(217 33% 17%);
+  --accent-foreground: hsl(210 40% 98%);
+
+  /* Danger: Slightly desaturated red */
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(210 40% 98%);
+
+  /* Borders: Dark enough to be subtle, visible enough to define structure */
+  --border: hsl(217 33% 20%);
+  --input: hsl(217 33% 20%);
+  --ring: hsl(161 70% 48%);
+
+  /* Chart & Sidebar Colors (Preserved) */
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
