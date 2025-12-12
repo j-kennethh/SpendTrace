@@ -227,3 +227,23 @@ export async function updateCategoryOrder(orderedIds: number[]) {
   await Promise.all(updates)
   revalidatePath('/')
 }
+
+export async function updateUserName(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
+
+  const name = formData.get('name') as string
+
+  const { error } = await supabase.auth.updateUser({
+    data: { full_name: name }
+  })
+
+  if (error) {
+    console.error('Error updating user name:', error)
+    return { error: error.message }
+  }
+
+  revalidatePath('/')
+  return { error: null }
+}
