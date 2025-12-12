@@ -25,11 +25,11 @@ export async function proxy(request: NextRequest) {
               ...options,
             })
           )
-          
+
           response = NextResponse.next({
             request,
           })
-          
+
           // Update the response cookies
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
@@ -39,7 +39,24 @@ export async function proxy(request: NextRequest) {
     }
   )
 
-  await supabase.auth.getUser()
+
+  if (request.nextUrl.pathname === '/favicon.ico') {
+    return NextResponse.next()
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (
+    !user &&
+    !request.nextUrl.pathname.startsWith('/login') &&
+    !request.nextUrl.pathname.startsWith('/auth')
+  ) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    return NextResponse.redirect(url)
+  }
 
   return response
 }

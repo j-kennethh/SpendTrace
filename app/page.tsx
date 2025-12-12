@@ -8,7 +8,7 @@ import AddExpenseModal from '@/components/AddExpenseModal'
 import CreateCategoryModal from '@/components/CreateCategoryModal'
 import CategoryList from '@/components/CategoryList'
 import TransactionList from '@/components/TransactionList' // Was missing in previous broken edit
-import { ModeToggle } from '@/components/ModeToggle'
+import Header from "@/components/Header"
 
 export default async function Dashboard() {
   const supabase = await createClient()
@@ -59,22 +59,7 @@ export default async function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       {/* HEADER */}
-      <header className="flex items-center justify-between p-6 bg-card shadow-sm sticky top-0 z-10">
-        <div>
-          <h1 className="text-xl font-bold text-primary">SpendTrace</h1>
-          <p className="text-xs text-muted-foreground">
-            {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <ModeToggle />
-          <form action="/auth/signout" method="post">
-            <Button variant="ghost" size="icon" className="hover:bg-destructive/15 hover:text-destructive">
-              <LogOut className="h-5 w-5" />
-            </Button>
-          </form>
-        </div>
-      </header>
+      <Header user={user} />
 
       <main className="p-6 space-y-6">
 

@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SpendTrace",
   description: "Track your expenses",
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 
