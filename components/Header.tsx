@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import SettingsModal from '@/components/SettingsModal'
 import { LogOut } from 'lucide-react'
 
-export default function Header({ user }: { user: User }) {
+export default function Header({ user, currency = '$' }: { user: User, currency?: string }) {
     const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'
 
     return (
@@ -19,7 +19,7 @@ export default function Header({ user }: { user: User }) {
                     <span className="text-foreground">{name}</span>
                 </div>
                 <div className="flex items-center gap-1 pl-2 border-l border-border/50">
-                    <SettingsModal initialName={name} />
+                    <SettingsModal initialName={name} initialCurrency={currency} />
                     <form action="/auth/signout" method="post">
                         <Button variant="ghost" size="icon" className="hover:bg-destructive/10 hover:text-destructive transition-colors" title="Sign out">
                             <LogOut className="h-5 w-5" />

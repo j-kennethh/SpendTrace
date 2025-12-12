@@ -33,10 +33,12 @@ type Category = {
 export default function CategoryCard({
   category,
   spent,
-  dragProps
+  dragProps,
+  currency = '$'
 }: {
   category: Category
   spent: number
+  currency?: string
   dragProps?: {
     attributes: any
     listeners: any
@@ -93,13 +95,13 @@ export default function CategoryCard({
               <div>
                 <span className="font-medium block">{category.name}</span>
                 <span className="text-xs text-muted-foreground">
-                  ${(budget - spent).toFixed(2)} left
+                  {currency}{(budget - spent).toFixed(2)} left
                 </span>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold">
-                ${spent.toFixed(2)} <span className="text-muted-foreground font-normal">/ ${budget}</span>
+                {currency}{spent.toFixed(2)} <span className="text-muted-foreground font-normal">/ {currency}{budget}</span>
               </span>
 
               <DropdownMenu>
@@ -167,7 +169,7 @@ export default function CategoryCard({
             <div className="grid gap-2">
               <Label htmlFor="monthly_budget">Monthly Budget</Label>
               <div className="relative">
-                <span className="absolute left-3 top-1.5 text-muted-foreground">$</span>
+                <span className="absolute left-3 top-1.5 text-muted-foreground">{currency}</span>
                 <Input
                   id="monthly_budget"
                   name="monthly_budget"

@@ -228,19 +228,23 @@ export async function updateCategoryOrder(orderedIds: number[]) {
   revalidatePath('/')
 }
 
-export async function updateUserName(formData: FormData) {
+export async function updateProfile(formData: FormData) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return
 
   const name = formData.get('name') as string
+  const currency = formData.get('currency') as string
 
   const { error } = await supabase.auth.updateUser({
-    data: { full_name: name }
+    data: {
+      full_name: name,
+      currency_symbol: currency
+    }
   })
 
   if (error) {
-    console.error('Error updating user name:', error)
+    console.error('Error updating profile:', error)
     return { error: error.message }
   }
 

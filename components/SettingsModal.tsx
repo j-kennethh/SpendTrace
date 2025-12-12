@@ -14,30 +14,49 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { updateUserName } from '@/app/actions'
+import { updateProfile } from '@/app/actions'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 interface SettingsModalProps {
     initialName: string
+    initialCurrency?: string
 }
 
-export default function SettingsModal({ initialName }: SettingsModalProps) {
+export default function SettingsModal({ initialName, initialCurrency = '$' }: SettingsModalProps) {
     const [name, setName] = useState(initialName)
+    const [currency, setCurrency] = useState(initialCurrency)
     const [isOpen, setIsOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const { setTheme, theme } = useTheme()
 
-    const handleUpdateName = async (e: React.FormEvent) => {
+    const handleSaveProfile = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (name === initialName) return
+        if (name === initialName && currency === initialCurrency) return
 
         setIsLoading(true)
         const formData = new FormData()
         formData.append('name', name)
+        formData.append('currency', currency)
 
-        await updateUserName(formData)
+        await updateProfile(formData)
         setIsLoading(false)
         setIsOpen(false)
     }
+
+    const currencies = [
+        { symbol: '$', name: 'Dollar ($)' },
+        { symbol: '€', name: 'Euro (€)' },
+        { symbol: '£', name: 'Pound (£)' },
+        { symbol: '¥', name: 'Yen (¥)' },
+        { symbol: '₩', name: 'Won (₩)' },
+        { symbol: '₱', name: 'Peso (₱)' },
+    ];
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -57,7 +76,7 @@ export default function SettingsModal({ initialName }: SettingsModalProps) {
                     {/* Profile Section */}
                     <div className="space-y-4">
                         <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Profile</h3>
-                        <form onSubmit={handleUpdateName} className="grid gap-2">
+                        <form onSubmit={handleSaveProfile} className="grid gap-2">
                             <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="name" className="text-right">
                                     Name
@@ -69,8 +88,29 @@ export default function SettingsModal({ initialName }: SettingsModalProps) {
                                     className="col-span-3"
                                 />
                             </div>
+
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="currency" className="text-right">
+                                    Currency
+                                </Label>
+                                <div className="col-span-3">
+                                    <Select value={currency} onValueChange={setCurrency}>
+                                        <SelectTrigger id="currency">
+                                            <SelectValue placeholder="Select currency" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {currencies.map((c) => (
+                                                <SelectItem key={c.symbol} value={c.symbol}>
+                                                    {c.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+
                             <div className="flex justify-end">
-                                <Button type="submit" disabled={isLoading || name === initialName} size="sm">
+                                <Button type="submit" disabled={isLoading || (name === initialName && currency === initialCurrency)} size="sm">
                                     {isLoading ? 'Saving...' : 'Save'}
                                 </Button>
                             </div>

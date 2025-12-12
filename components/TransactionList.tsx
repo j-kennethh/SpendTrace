@@ -26,10 +26,12 @@ type Expense = {
 
 export default function TransactionList({
     expenses,
-    categories
+    categories,
+    currency = '$'
 }: {
     expenses: Expense[],
     categories: Category[]
+    currency?: string
 }) {
     const [currentPage, setCurrentPage] = useState(1)
     const ITEMS_PER_PAGE = 5
@@ -55,6 +57,7 @@ export default function TransactionList({
                                 expense={expense}
                                 category={cat}
                                 allCategories={categories}
+                                currency={currency}
                             />
                         )
                     })}

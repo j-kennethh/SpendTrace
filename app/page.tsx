@@ -56,10 +56,12 @@ export default async function Dashboard() {
   // Calculate overall progress
   const progressPercentage = monthlyBudget > 0 ? (totalSpent / monthlyBudget) * 100 : 0
 
+  const currency = user.user_metadata.currency_symbol || '$'
+
   return (
     <div className="min-h-screen bg-background">
       {/* HEADER */}
-      <Header user={user} />
+      <Header user={user} currency={currency} />
 
       <main className="p-6 space-y-6">
 
@@ -70,12 +72,12 @@ export default async function Dashboard() {
               <span className="text-primary-foreground/80 text-sm font-medium">Total Spent</span>
             </div>
             <div className="text-4xl font-bold mb-4">
-              ${totalSpent.toFixed(2)}
+              {currency}{totalSpent.toFixed(2)}
             </div>
             <div className="space-y-1">
               <div className="flex justify-between text-xs opacity-90">
                 <span>{progressPercentage.toFixed(0)}% of Budget</span>
-                <span>${monthlyBudget.toFixed(2)} Limit</span>
+                <span>{currency}{monthlyBudget.toFixed(2)} Limit</span>
               </div>
               <div className="h-2 w-full bg-black/20 rounded-full overflow-hidden">
                 <div
@@ -91,12 +93,13 @@ export default async function Dashboard() {
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold text-foreground">Budgets</h2>
-            <CreateCategoryModal />
+            <CreateCategoryModal currency={currency} />
           </div>
 
           <CategoryList
             categories={categories || []}
             spendByCategory={spendByCategory}
+            currency={currency}
           >
             {/* Empty State */}
             <Card className="border-dashed border-2 shadow-none">
@@ -118,16 +121,20 @@ export default async function Dashboard() {
 
         {/* RECENT TRANSACTIONS */}
         <div>
-          <h2 className="text-lg font-semibold mb-3 text-foreground">Recent Transactions</h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-semibold text-foreground">Recent Transactions</h2>
+            <AddExpenseModal categories={categories || []} currency={currency} />
+          </div>
           <TransactionList
             expenses={expenses || []}
             categories={categories || []}
+            currency={currency}
           />
         </div>
       </main>
 
-      {/* MODAL */}
-      <AddExpenseModal categories={categories || []} />
+      {/* MODAL - kept for safety if needed, but AddExpenseModal is now inline above title */}
+      {/* <AddExpenseModal categories={categories || []} /> */}
     </div>
   )
 }

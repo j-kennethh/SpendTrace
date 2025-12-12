@@ -44,11 +44,13 @@ type Expense = {
 export default function TransactionItem({
   expense,
   category,
-  allCategories
+  allCategories,
+  currency = '$'
 }: {
   expense: Expense,
   category?: Category,
   allCategories: Category[]
+  currency?: string
 }) {
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -82,7 +84,7 @@ export default function TransactionItem({
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="font-bold text-foreground">-${Number(expense.amount).toFixed(2)}</span>
+          <span className="font-bold text-foreground">-{currency}{Number(expense.amount).toFixed(2)}</span>
 
           {/* Dropdown Menu for Actions */}
           <DropdownMenu>
@@ -125,7 +127,7 @@ export default function TransactionItem({
             <div className="grid gap-2">
               <Label htmlFor="amount">Amount</Label>
               <div className="relative">
-                <span className="absolute left-3 top-1.5 text-muted-foreground">$</span>
+                <span className="absolute left-3 top-1.5 text-muted-foreground">{currency}</span>
                 <Input
                   id="amount"
                   name="amount"

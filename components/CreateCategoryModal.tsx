@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { createCategory } from '@/app/actions'
 
-export default function CreateCategoryModal() {
+export default function CreateCategoryModal({ currency = '$' }: { currency?: string }) {
     const [isOpen, setIsOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
@@ -63,7 +63,7 @@ export default function CreateCategoryModal() {
                     <div className="grid gap-2">
                         <Label htmlFor="monthly_budget">Monthly Budget</Label>
                         <div className="relative">
-                            <span className="absolute left-3 top-1.5 text-muted-foreground">$</span>
+                            <span className="absolute left-3 top-1.5 text-muted-foreground">{currency}</span>
                             <Input
                                 id="monthly_budget"
                                 name="monthly_budget"

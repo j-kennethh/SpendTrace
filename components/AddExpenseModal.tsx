@@ -29,7 +29,7 @@ type Category = {
   icon: string | null
 }
 
-export default function AddExpenseModal({ categories }: { categories: Category[] }) {
+export default function AddExpenseModal({ categories, currency = '$' }: { categories: Category[], currency?: string }) {
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -75,7 +75,7 @@ export default function AddExpenseModal({ categories }: { categories: Category[]
           <div className="grid gap-2">
             <Label htmlFor="amount">Amount</Label>
             <div className="relative">
-              <span className="absolute left-3 top-1.5 text-muted-foreground">$</span>
+              <span className="absolute left-3 top-1.5 text-muted-foreground">{currency}</span>
               <Input
                 id="amount"
                 name="amount"

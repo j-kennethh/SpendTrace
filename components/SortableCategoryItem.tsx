@@ -13,10 +13,12 @@ type Category = {
 
 export default function SortableCategoryItem({
     category,
-    spent
+    spent,
+    currency = '$'
 }: {
     category: Category
     spent: number
+    currency?: string
 }) {
     const {
         attributes,
@@ -40,6 +42,7 @@ export default function SortableCategoryItem({
             <CategoryCard
                 category={category}
                 spent={spent}
+                currency={currency}
                 dragProps={{
                     attributes,
                     listeners

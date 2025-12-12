@@ -38,11 +38,13 @@ type Category = {
 export default function CategoryList({
     categories: initialCategories,
     spendByCategory,
-    children
+    children,
+    currency = '$'
 }: {
     categories: Category[]
     spendByCategory: Record<number, number>
     children?: React.ReactNode // For the empty state or other injected content if needed
+    currency?: string
 }) {
     const [categories, setCategories] = useState(initialCategories)
     const [isMounted, setIsMounted] = useState(false)
@@ -98,6 +100,7 @@ export default function CategoryList({
                             <CategoryCard
                                 category={cat}
                                 spent={spent}
+                                currency={currency}
                             />
                         </div>
                     )
@@ -126,6 +129,7 @@ export default function CategoryList({
                                 key={cat.id}
                                 category={cat}
                                 spent={spent}
+                                currency={currency}
                             />
                         )
                     })}
