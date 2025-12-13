@@ -117,11 +117,11 @@ export default function SettingsModal({ initialName, initialCurrency = '$' }: Se
                         </form>
                     </div>
 
-                    <div className="border-t" />
+                    <div className="border-t text-muted-foreground" />
 
                     {/* Appearance Section */}
                     <div className="space-y-4">
-                        <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Appearance</h3>
+                        <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Theme</h3>
                         <div className="grid grid-cols-3 gap-2">
                             <Button
                                 variant={theme === 'light' ? 'default' : 'outline'}
