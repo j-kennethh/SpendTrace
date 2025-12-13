@@ -96,7 +96,7 @@ export default async function Dashboard() {
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold text-foreground">Budgets</h2>
-            <CreateCategoryModal currency={currency} />
+            <CreateCategoryModal currency={currency} isLimitReached={(categories?.length || 0) >= 5} />
           </div>
 
           <CategoryList

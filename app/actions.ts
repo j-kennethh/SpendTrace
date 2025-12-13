@@ -140,7 +140,17 @@ export async function updateCategory(formData: FormData) {
 export async function createCategory(formData: FormData) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return
+  if (!user) return { error: 'User not authenticated' }
+
+  // 1. Check Limit (Max 5)
+  const { count } = await supabase
+    .from('categories')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+
+  if (count !== null && count >= 5) {
+    return { error: 'You have reached the limit of 5 categories.' }
+  }
 
   const name = formData.get('name')
   const icon = formData.get('icon')
@@ -167,7 +177,7 @@ export async function createCategory(formData: FormData) {
 
   if (error) {
     console.error('Error creating category:', error)
-    return
+    return { error: error.message }
   }
 
   revalidatePath('/')

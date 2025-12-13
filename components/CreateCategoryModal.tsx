@@ -15,15 +15,30 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { createCategory } from '@/app/actions'
 
-export default function CreateCategoryModal({ currency = '$' }: { currency?: string }) {
+export default function CreateCategoryModal({ currency = '$', isLimitReached = false }: { currency?: string, isLimitReached?: boolean }) {
     const [isOpen, setIsOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
     async function handleCreate(formData: FormData) {
         setIsLoading(true)
-        await createCategory(formData)
+        const result = await createCategory(formData)
         setIsLoading(false)
+
+        if (result?.error) {
+            alert(result.error)
+            return
+        }
+
         setIsOpen(false)
+    }
+
+    if (isLimitReached) {
+        return (
+            <Button size="sm" className="gap-1" disabled title="Category limit reached (5)">
+                <Plus className="h-4 w-4" />
+                Limit Reached
+            </Button>
+        )
     }
 
     return (
