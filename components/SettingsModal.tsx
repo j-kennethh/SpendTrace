@@ -65,7 +65,7 @@ export default function SettingsModal({ initialName, initialCurrency = '$' }: Se
                     <Settings className="h-5 w-5" />
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
                 <DialogHeader>
                     <DialogTitle>Settings</DialogTitle>
                     <DialogDescription>
