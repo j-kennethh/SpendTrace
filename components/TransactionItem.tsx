@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { MoreHorizontal, Pencil, Trash2, Loader2 } from 'lucide-react'
+import { ConfirmModal } from './ConfirmModal'
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -55,11 +56,15 @@ export default function TransactionItem({
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+
   // Handle Delete
   const handleDelete = async () => {
-    if (confirm('Are you sure you want to delete this expense?')) {
-      await deleteExpense(expense.id)
-    }
+    setIsDeleting(true)
+    await deleteExpense(expense.id)
+    setIsDeleting(false)
+    setIsDeleteOpen(false)
   }
 
   // Handle Update
@@ -97,7 +102,7 @@ export default function TransactionItem({
               <DropdownMenuItem onClick={() => setIsEditOpen(true)}>
                 <Pencil className="mr-2 h-4 w-4" /> Edit
               </DropdownMenuItem>
-              <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+              <DropdownMenuItem variant="destructive" onClick={() => setIsDeleteOpen(true)}>
                 <Trash2 className="mr-2 h-4 w-4" /> Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -178,6 +183,16 @@ export default function TransactionItem({
           </form>
         </DialogContent>
       </Dialog>
+
+      <ConfirmModal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete Expense"
+        description="Are you sure you want to delete this expense? This action cannot be undone."
+        variant="destructive"
+        isLoading={isDeleting}
+      />
     </>
   )
 }

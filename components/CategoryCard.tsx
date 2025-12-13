@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Pencil, Loader2, Trash2, MoreHorizontal, GripVertical } from 'lucide-react'
+import { ConfirmModal } from './ConfirmModal'
 import {
   Dialog,
   DialogContent,
@@ -46,6 +47,7 @@ export default function CategoryCard({
 }) {
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -63,11 +65,11 @@ export default function CategoryCard({
   }
 
   async function handleDelete() {
-    if (!confirm('Are you sure you want to delete this category?')) return
     setIsDeleting(true)
     setError(null)
     const result = await deleteCategory(category.id)
     setIsDeleting(false)
+    setIsDeleteOpen(false)
 
     if (result?.error) {
       alert(result.error) // Fallback as modal might be closed
@@ -114,8 +116,8 @@ export default function CategoryCard({
                   <DropdownMenuItem onClick={() => setIsEditOpen(true)}>
                     <Pencil className="mr-2 h-4 w-4" /> Edit
                   </DropdownMenuItem>
-                  <DropdownMenuItem variant="destructive" onClick={handleDelete}>
-                    {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />} Delete
+                  <DropdownMenuItem variant="destructive" onClick={() => setIsDeleteOpen(true)}>
+                    <Trash2 className="mr-2 h-4 w-4" /> Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -192,6 +194,16 @@ export default function CategoryCard({
           </form>
         </DialogContent>
       </Dialog>
+
+      <ConfirmModal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete Category"
+        description="Are you sure you want to delete this category? This will delete all expenses associated with it."
+        variant="destructive"
+        isLoading={isDeleting}
+      />
     </>
   )
 }
