@@ -5,10 +5,11 @@ import {
     DndContext,
     closestCenter,
     KeyboardSensor,
-    PointerSensor,
     useSensor,
     useSensors,
-    DragEndEvent
+    DragEndEvent,
+    TouchSensor,
+    MouseSensor
 } from '@dnd-kit/core'
 import {
     arrayMove,
@@ -59,7 +60,17 @@ export default function CategoryList({
     }, [initialCategories])
 
     const sensors = useSensors(
-        useSensor(PointerSensor),
+        useSensor(MouseSensor, {
+            activationConstraint: {
+                distance: 10,
+            },
+        }),
+        useSensor(TouchSensor, {
+            activationConstraint: {
+                delay: 250,
+                tolerance: 5,
+            },
+        }),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })
