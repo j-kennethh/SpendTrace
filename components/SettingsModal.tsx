@@ -53,7 +53,7 @@ export default function SettingsModal({ initialName, initialCurrency = '$' }: Se
         { symbol: '$', name: 'Dollar ($)' },
         { symbol: '€', name: 'Euro (€)' },
         { symbol: '£', name: 'Pound (£)' },
-        { symbol: '¥', name: 'Yen (¥)' },
+        { symbol: '¥', name: 'Yen/Yuan (¥)' },
         { symbol: '₩', name: 'Won (₩)' },
         { symbol: '₱', name: 'Peso (₱)' },
     ];

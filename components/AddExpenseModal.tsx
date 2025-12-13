@@ -65,7 +65,7 @@ export default function AddExpenseModal({ categories, currency = '$' }: { catego
             <Input
               id="description"
               name="description"
-              placeholder="e.g. Lunch at Canteen"
+              placeholder="e.g. Lunch"
               required
               autoFocus
             />

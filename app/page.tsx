@@ -28,13 +28,16 @@ export default async function Dashboard() {
     .order('id', { ascending: true }) // Fallback for old categories
 
   // 3. Fetch ALL Expenses for this month (for correct totals & client-side pagination)
-  const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
+  const now = new Date()
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+  const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString()
 
   const { data: expenses } = await supabase
     .from('expenses')
     .select('*')
     .eq('user_id', user.id)
     .gte('date', startOfMonth)
+    .lt('date', startOfNextMonth)
     .order('date', { ascending: false })
     .order('id', { ascending: false })
 
