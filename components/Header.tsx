@@ -2,17 +2,18 @@ import { User } from '@supabase/supabase-js'
 import { Button } from '@/components/ui/button'
 import SettingsModal from '@/components/SettingsModal'
 import { LogOut } from 'lucide-react'
+import MonthPicker from '@/components/MonthPicker'
 
-export default function Header({ user, currency = '$' }: { user: User, currency?: string }) {
+export default function Header({ user, currency = '$', currentMonth }: { user: User, currency?: string, currentMonth: Date }) {
     const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'
 
     return (
         <header className="flex items-center justify-between p-6 bg-card shadow-sm sticky top-0 z-10 transition-colors">
             <div>
                 <h1 className="text-xl font-bold text-primary tracking-tight">SpendTrace</h1>
-                <p className="text-xs text-muted-foreground font-medium">
-                    {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                </p>
+                <div className="mt-1">
+                    <MonthPicker currentMonth={currentMonth} />
+                </div>
             </div>
             <div className="flex items-center gap-4">
                 <div className="flex items-center gap-3 text-sm font-medium">
