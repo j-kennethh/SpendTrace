@@ -10,7 +10,8 @@ import CategoryList from '@/components/CategoryList'
 import TransactionList from '@/components/TransactionList' // Was missing in previous broken edit
 import Header from "@/components/Header"
 
-export default async function Dashboard() {
+export default async function Dashboard(props: { searchParams: Promise<{ date?: string }> }) {
+  const searchParams = await props.searchParams
   const supabase = await createClient()
 
   // 1. Check if user is logged in
@@ -29,8 +30,17 @@ export default async function Dashboard() {
 
   // 3. Fetch ALL Expenses for this month (for correct totals & client-side pagination)
   const now = new Date()
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
-  const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString()
+  let currentMonthDate = now
+
+  if (searchParams?.date) {
+    const [year, month] = searchParams.date.split('-').map(Number)
+    if (!isNaN(year) && !isNaN(month)) {
+      currentMonthDate = new Date(year, month - 1, 1)
+    }
+  }
+
+  const startOfMonth = new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth(), 1).toISOString()
+  const startOfNextMonth = new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth() + 1, 1).toISOString()
 
   const { data: expenses } = await supabase
     .from('expenses')
@@ -64,7 +74,7 @@ export default async function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       {/* HEADER */}
-      <Header user={user} currency={currency} />
+      <Header user={user} currency={currency} currentMonth={currentMonthDate} />
 
       <main className="p-6 space-y-6">
 
