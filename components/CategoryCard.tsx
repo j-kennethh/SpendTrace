@@ -55,6 +55,8 @@ export default function CategoryCard({
   const percent = budget > 0 ? (spent / budget) * 100 : 0
   const isOverBudget = spent > budget
   const isHighUsage = !isOverBudget && percent >= 80
+  const remainingPercent = Math.max(0, 100 - percent)
+  const displayValue = isOverBudget ? 100 : remainingPercent
 
   async function handleUpdate(formData: FormData) {
     setIsLoading(true)
@@ -125,7 +127,7 @@ export default function CategoryCard({
           </div>
 
           <Progress
-            value={percent}
+            value={displayValue}
             className={`h-2 ${dragProps ? 'ml-8 w-[calc(100%-2.5rem)]' : ''}`}
             indicatorClassName={isOverBudget ? "bg-destructive" : isHighUsage ? "bg-yellow-500" : ""}
           />

@@ -68,6 +68,16 @@ export default async function Dashboard(props: { searchParams: Promise<{ date?: 
 
   // Calculate overall progress
   const progressPercentage = monthlyBudget > 0 ? (totalSpent / monthlyBudget) * 100 : 0
+  const isOverBudget = totalSpent > monthlyBudget
+  const isHighUsage = !isOverBudget && progressPercentage >= 80
+
+  const remainingPercentage = Math.max(0, 100 - progressPercentage)
+  const barWidth = isOverBudget ? 100 : remainingPercentage
+  const barColor = isOverBudget 
+    ? "bg-destructive" 
+    : isHighUsage 
+      ? "bg-yellow-500" 
+      : "bg-primary-foreground"
 
   const currency = user.user_metadata.currency_symbol || '$'
 
@@ -94,8 +104,8 @@ export default async function Dashboard(props: { searchParams: Promise<{ date?: 
               </div>
               <div className="h-2 w-full bg-black/20 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-primary-foreground rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(progressPercentage, 100)}%` }}
+                  className={`h-full rounded-full transition-all duration-500 ${barColor}`}
+                  style={{ width: `${barWidth}%` }}
                 />
               </div>
             </div>
