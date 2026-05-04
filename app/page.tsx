@@ -103,8 +103,8 @@ export default async function Dashboard(props: { searchParams: Promise<{ date?: 
             </div>
             <div className="space-y-1">
               <div className="flex justify-between text-xs opacity-90">
-                <span>{progressPercentage.toFixed(0)}% of Budget</span>
-                <span>{currency}{monthlyBudget.toFixed(2)} Limit</span>
+                <span>{currency}{Math.max(0, monthlyBudget - totalSpent).toFixed(2)} left</span>
+                <span>{currency}{monthlyBudget.toFixed(2)} Budget</span>
               </div>
               <div className="h-2 w-full bg-black/20 rounded-full overflow-hidden">
                 <div
