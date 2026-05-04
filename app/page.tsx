@@ -39,8 +39,12 @@ export default async function Dashboard(props: { searchParams: Promise<{ date?: 
     }
   }
 
-  const startOfMonth = new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth(), 1).toISOString()
-  const startOfNextMonth = new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth() + 1, 1).toISOString()
+  const y = currentMonthDate.getFullYear()
+  const m = currentMonthDate.getMonth()
+  const startOfMonth = `${y}-${String(m + 1).padStart(2, '0')}-01`
+  
+  const nextMonthDate = new Date(y, m + 1, 1)
+  const startOfNextMonth = `${nextMonthDate.getFullYear()}-${String(nextMonthDate.getMonth() + 1).padStart(2, '0')}-01`
 
   const { data: expenses } = await supabase
     .from('expenses')
