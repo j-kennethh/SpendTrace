@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SpendTrace
+
+SpendTrace is a sleek, modern personal finance and expense tracking application built to help you manage your monthly budgets efficiently. 
+
+**Live Demo:** [https://spendtrace.vercel.app](https://spendtrace.vercel.app)
+
+## Features
+
+- **Dashboard & Monthly Overviews**: Easily track your total spend against your monthly budgets. Navigate through past and current months to see your spending history.
+- **Budget Categories**: Create up to 5 custom budget categories with individual monthly limits and icons. 
+- **Drag & Drop Organization**: Reorder your budget categories easily using drag and drop functionality.
+- **Expense Tracking**: Log individual transactions with descriptions, amounts, dates, and assign them to your custom categories.
+- **Visual Progress Tracking**: Beautiful progress bars show you exactly how much of your budget you've consumed.
+- **Customizable Profile**: Set your preferred currency symbol.
+- **Dark / Light Mode**: Built-in support for multiple color themes.
+- **Secure Authentication**: User sign-up and login handled seamlessly.
+
+## Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org/) (App Router, React 19)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) with Radix UI components
+- **Backend & Database**: [Supabase](https://supabase.com/)
+- **Drag & Drop**: [@dnd-kit](https://dndkit.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+You need [Node.js](https://nodejs.org/) installed on your machine and a [Supabase](https://supabase.com/) account.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Clone the repository** (or download the source):
+   ```bash
+   git clone <repository-url>
+   cd spendtrace
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-## Learn More
+3. **Set up Supabase**:
+   - Create a new Supabase project.
+   - Set up the necessary tables (`categories` and `expenses`).
+   - Create a `.env.local` file in the root directory and add your Supabase credentials:
+     ```env
+     NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+     NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+     ```
 
-To learn more about Next.js, take a look at the following resources:
+4. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+- `app/`: Next.js App Router files, server actions (`actions.ts`), and main dashboard logic.
+- `components/`: Reusable React components including Modals, Header, and drag-and-drop lists.
+- `lib/supabase/`: Supabase client configuration for server-side rendering.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is open-source and available under the MIT License.
