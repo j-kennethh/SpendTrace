@@ -39,8 +39,12 @@ export default async function Dashboard(props: { searchParams: Promise<{ date?: 
     }
   }
 
-  const startOfMonth = new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth(), 1).toISOString()
-  const startOfNextMonth = new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth() + 1, 1).toISOString()
+  const y = currentMonthDate.getFullYear()
+  const m = currentMonthDate.getMonth()
+  const startOfMonth = `${y}-${String(m + 1).padStart(2, '0')}-01`
+  
+  const nextMonthDate = new Date(y, m + 1, 1)
+  const startOfNextMonth = `${nextMonthDate.getFullYear()}-${String(nextMonthDate.getMonth() + 1).padStart(2, '0')}-01`
 
   const { data: expenses } = await supabase
     .from('expenses')
@@ -68,6 +72,16 @@ export default async function Dashboard(props: { searchParams: Promise<{ date?: 
 
   // Calculate overall progress
   const progressPercentage = monthlyBudget > 0 ? (totalSpent / monthlyBudget) * 100 : 0
+  const isOverBudget = totalSpent > monthlyBudget
+  const isHighUsage = !isOverBudget && progressPercentage >= 80
+
+  const remainingPercentage = Math.max(0, 100 - progressPercentage)
+  const barWidth = isOverBudget ? 100 : remainingPercentage
+  const barColor = isOverBudget 
+    ? "bg-destructive" 
+    : isHighUsage 
+      ? "bg-yellow-500" 
+      : "bg-primary-foreground"
 
   const currency = user.user_metadata.currency_symbol || '$'
 
@@ -89,13 +103,13 @@ export default async function Dashboard(props: { searchParams: Promise<{ date?: 
             </div>
             <div className="space-y-1">
               <div className="flex justify-between text-xs opacity-90">
-                <span>{progressPercentage.toFixed(0)}% of Budget</span>
-                <span>{currency}{monthlyBudget.toFixed(2)} Limit</span>
+                <span>{currency}{Math.max(0, monthlyBudget - totalSpent).toFixed(2)} left</span>
+                <span>{currency}{monthlyBudget.toFixed(2)} Budget</span>
               </div>
               <div className="h-2 w-full bg-black/20 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-primary-foreground rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(progressPercentage, 100)}%` }}
+                  className={`h-full rounded-full transition-all duration-500 ${barColor}`}
+                  style={{ width: `${barWidth}%` }}
                 />
               </div>
             </div>
