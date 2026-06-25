@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 
 type Category = {
   id: number
@@ -69,6 +70,17 @@ export default function AnalyticsClient({
 
   // 2. PIE CHART DATA AGGREGATION
   const [hoveredPieIdx, setHoveredPieIdx] = useState<number | null>(null)
+  const [activeHeatmapDay, setActiveHeatmapDay] = useState<number | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768 || window.matchMedia('(pointer: coarse)').matches)
+    }
+    checkIfMobile()
+    window.addEventListener('resize', checkIfMobile)
+    return () => window.removeEventListener('resize', checkIfMobile)
+  }, [])
   
   const pieData = useMemo(() => {
     const spendByCategory: Record<number, number> = {}
@@ -374,15 +386,30 @@ export default function AnalyticsClient({
                   const dateLabel = `${selectedMonth.toLocaleString('default', { month: 'short' })} ${day}, ${y}`
                   
                   return (
-                    <div key={`day-${day}`} className="relative group/day aspect-square w-full">
+                    <div 
+                      key={`day-${day}`} 
+                      className="relative group/day aspect-square w-full"
+                      onClick={isMobile ? () => setActiveHeatmapDay((prev) => prev === day ? null : day) : undefined}
+                    >
                       <div
-                        className={`w-full h-full rounded flex items-center justify-center text-[11px] font-medium cursor-pointer transition-all shadow-sm ${getShadingLevel(amount)}`}
+                        className={cn(
+                          "w-full h-full rounded flex items-center justify-center text-[11px] font-medium transition-all shadow-sm",
+                          isMobile ? "cursor-pointer" : "cursor-default",
+                          getShadingLevel(amount)
+                        )}
                       >
                         {day}
                       </div>
 
-                      {/* Custom CSS-only floating tooltip matching the line chart */}
-                      <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover/day:flex z-30 pointer-events-none bg-popover/95 backdrop-blur-sm border shadow-lg px-2.5 py-1.5 rounded-md text-[10px] text-popover-foreground flex-col items-center whitespace-nowrap font-medium transition-all duration-150 ease-out">
+                      {/* Custom floating tooltip matching the line chart */}
+                      <div 
+                        className={cn(
+                          "absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-30 pointer-events-none bg-popover/95 backdrop-blur-sm border shadow-lg px-2.5 py-1.5 rounded-md text-[10px] text-popover-foreground flex-col items-center whitespace-nowrap font-medium transition-all duration-150 ease-out",
+                          isMobile 
+                            ? (activeHeatmapDay === day ? "flex" : "hidden") 
+                            : "hidden group-hover/day:flex"
+                        )}
+                      >
                         <span className="text-[8px] text-muted-foreground font-semibold uppercase tracking-wider">{dateLabel}</span>
                         <span className="font-bold text-[11px] mt-0.5">{currency}{amount.toFixed(2)}</span>
                       </div>
@@ -415,12 +442,12 @@ export default function AnalyticsClient({
         </CardHeader>
         <CardContent className="py-4">
           
-          <div className="relative w-full overflow-hidden select-none">
+          <div className="relative w-full overflow-x-auto select-none pb-2 scrollbar-thin">
             <svg 
               viewBox={`0 0 ${lineChartParams.width} ${lineChartParams.height}`} 
               width="100%" 
               height="100%"
-              className="overflow-visible"
+              className="overflow-visible w-full min-w-[500px] h-[200px] md:h-auto"
             >
               {/* Gradients */}
               <defs>
