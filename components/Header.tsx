@@ -1,10 +1,11 @@
 import { User } from '@supabase/supabase-js'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import SettingsModal from '@/components/SettingsModal'
 import { LogOut } from 'lucide-react'
 import MonthPicker from '@/components/MonthPicker'
 import Link from 'next/link'
 import { format } from 'date-fns'
+import { cn } from '@/lib/utils'
 
 interface HeaderProps {
     user: User
@@ -37,31 +38,37 @@ export default function Header({
 
             {/* Navigation Tabs */}
             <nav className="flex items-center gap-1 bg-muted p-1 rounded-lg text-sm font-medium">
-                <Link href={dashboardHref} passHref legacyBehavior>
-                    <Button 
-                        variant={activeTab === 'dashboard' ? 'secondary' : 'ghost'} 
-                        size="sm" 
-                        className={`h-8 px-4 font-semibold rounded-md transition-all ${
+                <Link 
+                    href={dashboardHref}
+                    className={cn(
+                        buttonVariants({ 
+                            variant: activeTab === 'dashboard' ? 'secondary' : 'ghost', 
+                            size: 'sm' 
+                        }),
+                        `h-8 px-4 font-semibold rounded-md transition-all no-underline ${
                             activeTab === 'dashboard' 
                             ? 'bg-background shadow-sm hover:bg-background text-foreground' 
                             : 'text-muted-foreground hover:text-foreground'
-                        }`}
-                    >
-                        Dashboard
-                    </Button>
+                        }`
+                    )}
+                >
+                    Dashboard
                 </Link>
-                <Link href={analyticsHref} passHref legacyBehavior>
-                    <Button 
-                        variant={activeTab === 'analytics' ? 'secondary' : 'ghost'} 
-                        size="sm" 
-                        className={`h-8 px-4 font-semibold rounded-md transition-all ${
+                <Link 
+                    href={analyticsHref}
+                    className={cn(
+                        buttonVariants({ 
+                            variant: activeTab === 'analytics' ? 'secondary' : 'ghost', 
+                            size: 'sm' 
+                        }),
+                        `h-8 px-4 font-semibold rounded-md transition-all no-underline ${
                             activeTab === 'analytics' 
                             ? 'bg-background shadow-sm hover:bg-background text-foreground' 
                             : 'text-muted-foreground hover:text-foreground'
-                        }`}
-                    >
-                        Analytics
-                    </Button>
+                        }`
+                    )}
+                >
+                    Analytics
                 </Link>
             </nav>
 
