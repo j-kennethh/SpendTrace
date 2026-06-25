@@ -186,8 +186,30 @@ export default function AnalyticsClient({
     const contentWidth = width - paddingLeft - paddingRight
     const contentHeight = height - paddingTop - paddingBottom
 
-    const maxSpend = Math.max(...trendData.map((d) => d.total), 100)
-    const yMax = maxSpend * 1.15 // Add padding at the top
+    const maxSpend = Math.max(...trendData.map((d) => d.total), 10)
+    
+    // Determine a nice round step size based on max spending
+    let step = 10
+    if (maxSpend > 10000) step = 5000
+    else if (maxSpend > 5000) step = 2000
+    else if (maxSpend > 2000) step = 1000
+    else if (maxSpend > 1000) step = 500
+    else if (maxSpend > 500) step = 200
+    else if (maxSpend > 200) step = 100
+    else if (maxSpend > 100) step = 50
+    else if (maxSpend > 50) step = 25
+    else if (maxSpend > 20) step = 10
+    else step = 5
+
+    // Calculate rounded yMax as a multiple of step
+    const yMax = Math.ceil((maxSpend * 1.05) / step) * step
+
+    // Generate rounded grid values (e.g., [500, 400, 300, 200, 100, 0])
+    const gridValues: number[] = []
+    for (let val = 0; val <= yMax; val += step) {
+      gridValues.push(val)
+    }
+    gridValues.reverse()
 
     const points = trendData.map((d, i) => {
       const x = paddingLeft + (i / 5) * contentWidth
@@ -211,7 +233,8 @@ export default function AnalyticsClient({
       yMax,
       points,
       linePath,
-      areaPath
+      areaPath,
+      gridValues
     }
   }, [trendData])
 
@@ -320,7 +343,7 @@ export default function AnalyticsClient({
         {/* DAILY HEATMAP GRAPH */}
         <Card className="shadow-md border-muted">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold">Daily Heatmap ({selectedMonth.toLocaleString('default', { month: 'long', year: 'numeric' })})</CardTitle>
+            <CardTitle className="text-base font-semibold">Daily Heatmap</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center py-6">
             
@@ -402,17 +425,17 @@ export default function AnalyticsClient({
               {/* Gradients */}
               <defs>
                 <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#6366f1" stopOpacity="0.25" />
-                  <stop offset="100%" stopColor="#6366f1" stopOpacity="0.0" />
+                  <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.25" />
+                  <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.0" />
                 </linearGradient>
               </defs>
 
               {/* Grid Lines */}
-              {[0, 0.25, 0.5, 0.75, 1.0].map((ratio, idx) => {
-                const yVal = lineChartParams.paddingTop + lineChartParams.contentHeight * ratio
-                const valueLabel = (lineChartParams.yMax * (1 - ratio)).toFixed(0)
+              {lineChartParams.gridValues.map((value) => {
+                const ratio = value / lineChartParams.yMax
+                const yVal = lineChartParams.paddingTop + lineChartParams.contentHeight * (1 - ratio)
                 return (
-                  <g key={`grid-${idx}`}>
+                  <g key={`grid-${value}`}>
                     <line 
                       x1={lineChartParams.paddingLeft} 
                       y1={yVal} 
@@ -428,7 +451,7 @@ export default function AnalyticsClient({
                       textAnchor="end" 
                       className="fill-muted-foreground/80 dark:fill-muted-foreground/50 text-[10px] font-medium"
                     >
-                      {currency}{valueLabel}
+                      {currency}{value}
                     </text>
                   </g>
                 )
@@ -448,7 +471,7 @@ export default function AnalyticsClient({
                 <path 
                   d={lineChartParams.linePath} 
                   fill="none" 
-                  stroke="#6366f1" 
+                  stroke="var(--primary)" 
                   strokeWidth="3.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -458,12 +481,12 @@ export default function AnalyticsClient({
 
               {/* Hover vertical helper line */}
               {hoveredDot && (
-                <line
+                <line 
                   x1={hoveredDot.x}
                   y1={lineChartParams.paddingTop}
                   x2={hoveredDot.x}
                   y2={lineChartParams.paddingTop + lineChartParams.contentHeight}
-                  className="stroke-indigo-400/40 dark:stroke-indigo-400/30"
+                  className="stroke-primary/40 dark:stroke-primary/30"
                   strokeWidth="1.5"
                   strokeDasharray="4 4"
                 />
@@ -478,7 +501,7 @@ export default function AnalyticsClient({
                       cx={p.x}
                       cy={p.y}
                       r={isHovered ? "6.5" : "4.5"}
-                      fill="#6366f1"
+                      fill="var(--primary)"
                       stroke="var(--background)"
                       strokeWidth="2.5"
                       className="pointer-events-none transition-all duration-200"
