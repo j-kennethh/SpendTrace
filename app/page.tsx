@@ -88,7 +88,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ date?: 
   return (
     <div className="min-h-screen bg-background">
       {/* HEADER */}
-      <Header user={user} currency={currency} currentMonth={currentMonthDate} />
+      <Header user={user} currency={currency} currentMonth={currentMonthDate} activeTab="dashboard" />
 
       <main className="p-6 space-y-6">
 
