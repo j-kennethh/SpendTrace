@@ -451,30 +451,58 @@ export default function AnalyticsClient({
                 />
               )}
 
-              {/* Data Dots & Label Triggers */}
+              {/* Hover vertical helper line */}
+              {hoveredDot && (
+                <line
+                  x1={hoveredDot.x}
+                  y1={lineChartParams.paddingTop}
+                  x2={hoveredDot.x}
+                  y2={lineChartParams.paddingTop + lineChartParams.contentHeight}
+                  className="stroke-indigo-400/40 dark:stroke-indigo-400/30"
+                  strokeWidth="1.5"
+                  strokeDasharray="4 4"
+                />
+              )}
+
+              {/* Data Dots */}
+              {lineChartParams.points.map((p, idx) => {
+                const isHovered = hoveredDot?.label === p.label
+                return (
+                  <g key={`point-${idx}`}>
+                    <circle
+                      cx={p.x}
+                      cy={p.y}
+                      r={isHovered ? "6.5" : "4.5"}
+                      fill="#6366f1"
+                      stroke="var(--background)"
+                      strokeWidth="2.5"
+                      className="pointer-events-none transition-all duration-200"
+                    />
+                    {/* X Axis Labels */}
+                    <text
+                      x={p.x}
+                      y={lineChartParams.height - 15}
+                      textAnchor="middle"
+                      className="fill-muted-foreground/90 dark:fill-muted-foreground/60 text-[10px] font-bold"
+                    >
+                      {p.label}
+                    </text>
+                  </g>
+                )
+              })}
+
+              {/* Large Invisible Hover Overlay Targets */}
               {lineChartParams.points.map((p, idx) => (
-                <g key={`point-${idx}`}>
-                  <circle
-                    cx={p.x}
-                    cy={p.y}
-                    r={hoveredDot?.label === p.label ? "6" : "4.5"}
-                    fill="#6366f1"
-                    stroke="var(--background)"
-                    strokeWidth="2"
-                    className="cursor-pointer transition-all duration-200 hover:scale-125"
-                    onMouseEnter={() => setHoveredDot(p)}
-                    onMouseLeave={() => setHoveredDot(null)}
-                  />
-                  {/* X Axis Labels */}
-                  <text
-                    x={p.x}
-                    y={lineChartParams.height - 15}
-                    textAnchor="middle"
-                    className="fill-muted-foreground/90 dark:fill-muted-foreground/60 text-[10px] font-bold"
-                  >
-                    {p.label}
-                  </text>
-                </g>
+                <circle
+                  key={`hover-target-${idx}`}
+                  cx={p.x}
+                  cy={p.y}
+                  r="20"
+                  fill="transparent"
+                  className="cursor-pointer"
+                  onMouseEnter={() => setHoveredDot(p)}
+                  onMouseLeave={() => setHoveredDot(null)}
+                />
               ))}
             </svg>
 
