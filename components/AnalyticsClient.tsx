@@ -349,15 +349,20 @@ export default function AnalyticsClient({
                   const day = i + 1
                   const amount = heatmapData[day] || 0
                   const dateLabel = `${selectedMonth.toLocaleString('default', { month: 'short' })} ${day}, ${y}`
-                  const tooltipText = `${dateLabel} • Spent: ${currency}${amount.toFixed(2)}`
                   
                   return (
-                    <div
-                      key={`day-${day}`}
-                      className={`aspect-square w-full rounded flex items-center justify-center text-[11px] font-medium cursor-help transition-all shadow-sm ${getShadingLevel(amount)}`}
-                      title={tooltipText}
-                    >
-                      {day}
+                    <div key={`day-${day}`} className="relative group/day aspect-square w-full">
+                      <div
+                        className={`w-full h-full rounded flex items-center justify-center text-[11px] font-medium cursor-pointer transition-all shadow-sm ${getShadingLevel(amount)}`}
+                      >
+                        {day}
+                      </div>
+
+                      {/* Custom CSS-only floating tooltip matching the line chart */}
+                      <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover/day:flex z-30 pointer-events-none bg-popover/95 backdrop-blur-sm border shadow-lg px-2.5 py-1.5 rounded-md text-[10px] text-popover-foreground flex-col items-center whitespace-nowrap font-medium transition-all duration-150 ease-out">
+                        <span className="text-[8px] text-muted-foreground font-semibold uppercase tracking-wider">{dateLabel}</span>
+                        <span className="font-bold text-[11px] mt-0.5">{currency}{amount.toFixed(2)}</span>
+                      </div>
                     </div>
                   )
                 })}
