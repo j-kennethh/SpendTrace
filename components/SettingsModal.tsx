@@ -26,9 +26,10 @@ import {
 interface SettingsModalProps {
     initialName: string
     initialCurrency?: string
+    triggerText?: string
 }
 
-export default function SettingsModal({ initialName, initialCurrency = '$' }: SettingsModalProps) {
+export default function SettingsModal({ initialName, initialCurrency = '$', triggerText }: SettingsModalProps) {
     const [name, setName] = useState(initialName)
     const [currency, setCurrency] = useState(initialCurrency)
     const [isOpen, setIsOpen] = useState(false)
@@ -61,9 +62,16 @@ export default function SettingsModal({ initialName, initialCurrency = '$' }: Se
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="hover:bg-muted/50" title="Settings">
-                    <Settings className="h-5 w-5" />
-                </Button>
+                {triggerText ? (
+                    <Button variant="ghost" className="w-full justify-start gap-2 font-semibold hover:bg-muted/50">
+                        <Settings className="h-5 w-5" />
+                        {triggerText}
+                    </Button>
+                ) : (
+                    <Button variant="ghost" size="icon" className="hover:bg-muted/50" title="Settings">
+                        <Settings className="h-5 w-5" />
+                    </Button>
+                )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
                 <DialogHeader>
