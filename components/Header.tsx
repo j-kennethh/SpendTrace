@@ -31,7 +31,7 @@ export default function Header({
     const analyticsHref = `/analytics?date=${dateParam}`
 
     return (
-        <header className="flex items-center justify-between gap-4 p-6 bg-card shadow-sm sticky top-0 z-10 transition-colors">
+        <header className="flex items-center justify-between md:grid md:grid-cols-3 gap-4 p-6 bg-card shadow-sm sticky top-0 z-10 transition-colors">
             {/* Left Section (Always Visible) */}
             <div className="flex items-center gap-4">
                 <div>
@@ -43,7 +43,7 @@ export default function Header({
             </div>
 
             {/* Desktop Navigation Tabs (Hidden on mobile) */}
-            <nav className="hidden md:flex items-center gap-1 bg-muted p-1 rounded-lg text-sm font-medium">
+            <nav className="hidden md:flex justify-self-center items-center gap-1 bg-muted p-1 rounded-lg text-sm font-medium">
                 <Link 
                     href={dashboardHref}
                     className={cn(
@@ -78,31 +78,34 @@ export default function Header({
                 </Link>
             </nav>
 
-            {/* Desktop User Section (Hidden on mobile) */}
-            <div className="hidden md:flex items-center gap-4">
-                <div className="flex items-center gap-3 text-sm font-medium">
-                    <span className="text-foreground">{name}</span>
+            {/* Right Section: Desktop User controls & Mobile Menu trigger */}
+            <div className="flex items-center justify-end md:justify-self-end gap-4">
+                {/* Desktop User Section (Hidden on mobile) */}
+                <div className="hidden md:flex items-center gap-4">
+                    <div className="flex items-center gap-3 text-sm font-medium">
+                        <span className="text-foreground">{name}</span>
+                    </div>
+                    <div className="flex items-center gap-1 pl-2 border-l border-border/50">
+                        <SettingsModal initialName={name} initialCurrency={currency} />
+                        <form action="/auth/signout" method="post">
+                            <Button variant="ghost" size="icon" className="hover:bg-destructive/10 hover:text-destructive transition-colors" title="Sign out">
+                                <LogOut className="h-5 w-5" />
+                            </Button>
+                        </form>
+                    </div>
                 </div>
-                <div className="flex items-center gap-1 pl-2 border-l border-border/50">
-                    <SettingsModal initialName={name} initialCurrency={currency} />
-                    <form action="/auth/signout" method="post">
-                        <Button variant="ghost" size="icon" className="hover:bg-destructive/10 hover:text-destructive transition-colors" title="Sign out">
-                            <LogOut className="h-5 w-5" />
-                        </Button>
-                    </form>
-                </div>
-            </div>
 
-            {/* Mobile Menu Button (Visible on mobile) */}
-            <Button 
-                variant="ghost" 
-                size="icon" 
-                className="md:hidden hover:bg-muted/50 rounded-md" 
-                onClick={() => setIsMobileMenuOpen(true)}
-                title="Open menu"
-            >
-                <Menu className="h-6 w-6 text-foreground" />
-            </Button>
+                {/* Mobile Menu Button (Visible on mobile) */}
+                <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="md:hidden hover:bg-muted/50 rounded-md animate-duration-150" 
+                    onClick={() => setIsMobileMenuOpen(true)}
+                    title="Open menu"
+                >
+                    <Menu className="h-6 w-6 text-foreground" />
+                </Button>
+            </div>
 
             {/* Mobile Sidebar Navigation Drawer */}
             {/* Backdrop */}
