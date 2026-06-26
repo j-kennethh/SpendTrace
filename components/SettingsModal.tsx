@@ -63,7 +63,7 @@ export default function SettingsModal({ initialName, initialCurrency = '$', trig
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
                 {triggerText ? (
-                    <Button variant="ghost" className="w-full justify-start gap-2 font-semibold hover:bg-muted/50">
+                    <Button variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground hover:bg-muted/50 font-semibold rounded-md">
                         <Settings className="h-5 w-5" />
                         {triggerText}
                     </Button>
