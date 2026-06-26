@@ -125,19 +125,11 @@ export default function Header({
             >
                 {/* Close Button Header */}
                 <div className="flex items-center justify-between border-b border-border/50 pb-3">
-                    <span className="font-bold text-lg text-primary tracking-tight">Menu</span>
+                    <span className="font-bold text-lg text-primary tracking-tight truncate mr-2">{name}</span>
                     <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)} title="Close menu" className="rounded-md">
                         <X className="h-5 w-5 text-foreground" />
                     </Button>
                 </div>
-
-                {/* Profile display */}
-                <div className="flex flex-col gap-0.5">
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">User</span>
-                    <span className="font-bold text-foreground text-sm truncate">{name}</span>
-                </div>
-
-                <div className="border-t border-border/50" />
 
                 {/* Navigation links */}
                 <div className="flex flex-col gap-2">
