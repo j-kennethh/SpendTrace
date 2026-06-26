@@ -442,138 +442,140 @@ export default function AnalyticsClient({
         </CardHeader>
         <CardContent className="py-4">
           
-          <div className="relative w-full overflow-x-auto select-none pb-2 scrollbar-thin">
-            <svg 
-              viewBox={`0 0 ${lineChartParams.width} ${lineChartParams.height}`} 
-              width="100%" 
-              height="100%"
-              className="overflow-visible w-full min-w-[500px] h-[200px] md:h-auto"
-            >
-              {/* Gradients */}
-              <defs>
-                <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.25" />
-                  <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.0" />
-                </linearGradient>
-              </defs>
-
-              {/* Grid Lines */}
-              {lineChartParams.gridValues.map((value) => {
-                const ratio = value / lineChartParams.yMax
-                const yVal = lineChartParams.paddingTop + lineChartParams.contentHeight * (1 - ratio)
-                return (
-                  <g key={`grid-${value}`}>
-                    <line 
-                      x1={lineChartParams.paddingLeft} 
-                      y1={yVal} 
-                      x2={lineChartParams.width - 20} 
-                      y2={yVal} 
-                      className="stroke-muted-foreground/10 dark:stroke-muted-foreground/5"
-                      strokeWidth="1"
-                      strokeDasharray="4 4"
-                    />
-                    <text 
-                      x={lineChartParams.paddingLeft - 10} 
-                      y={yVal + 3.5} 
-                      textAnchor="end" 
-                      className="fill-muted-foreground/80 dark:fill-muted-foreground/50 text-[10px] font-medium"
-                    >
-                      {currency}{value}
-                    </text>
-                  </g>
-                )
-              })}
-
-              {/* Area Gradient Fill */}
-              {lineChartParams.areaPath && (
-                <path 
-                  d={lineChartParams.areaPath} 
-                  fill="url(#areaGradient)" 
-                  className="transition-all duration-500"
-                />
-              )}
-
-              {/* Line Stroke */}
-              {lineChartParams.linePath && (
-                <path 
-                  d={lineChartParams.linePath} 
-                  fill="none" 
-                  stroke="var(--primary)" 
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="transition-all duration-500"
-                />
-              )}
-
-              {/* Hover vertical helper line */}
-              {hoveredDot && (
-                <line 
-                  x1={hoveredDot.x}
-                  y1={lineChartParams.paddingTop}
-                  x2={hoveredDot.x}
-                  y2={lineChartParams.paddingTop + lineChartParams.contentHeight}
-                  className="stroke-primary/40 dark:stroke-primary/30"
-                  strokeWidth="1.5"
-                  strokeDasharray="4 4"
-                />
-              )}
-
-              {/* Data Dots */}
-              {lineChartParams.points.map((p, idx) => {
-                const isHovered = hoveredDot?.label === p.label
-                return (
-                  <g key={`point-${idx}`}>
-                    <circle
-                      cx={p.x}
-                      cy={p.y}
-                      r={isHovered ? "6.5" : "4.5"}
-                      fill="var(--primary)"
-                      stroke="var(--background)"
-                      strokeWidth="2.5"
-                      className="pointer-events-none transition-all duration-200"
-                    />
-                    {/* X Axis Labels */}
-                    <text
-                      x={p.x}
-                      y={lineChartParams.height - 15}
-                      textAnchor="middle"
-                      className="fill-muted-foreground/90 dark:fill-muted-foreground/60 text-[10px] font-bold"
-                    >
-                      {p.label}
-                    </text>
-                  </g>
-                )
-              })}
-
-              {/* Large Invisible Hover Overlay Targets */}
-              {lineChartParams.points.map((p, idx) => (
-                <circle
-                  key={`hover-target-${idx}`}
-                  cx={p.x}
-                  cy={p.y}
-                  r="20"
-                  fill="transparent"
-                  className="cursor-pointer"
-                  onMouseEnter={() => setHoveredDot(p)}
-                  onMouseLeave={() => setHoveredDot(null)}
-                />
-              ))}
-            </svg>
-
-            {/* Custom Interactive Floating Tooltip */}
-            {hoveredDot && (
-              <div 
-                className="absolute z-20 pointer-events-none bg-popover/95 backdrop-blur-sm border shadow-lg px-2.5 py-1.5 rounded-md text-[11px] text-popover-foreground transition-all duration-150 ease-out flex flex-col font-medium"
-                style={{
-                  left: `calc(${(hoveredDot.x / lineChartParams.width) * 100}% - 45px)`,
-                  top: `calc(${(hoveredDot.y / lineChartParams.height) * 100}% - 55px)`
-                }}
+          <div className="w-full overflow-x-auto select-none pb-2 scrollbar-thin">
+            <div className="relative w-full min-w-[500px]">
+              <svg 
+                viewBox={`0 0 ${lineChartParams.width} ${lineChartParams.height}`} 
+                width="100%" 
+                height="100%"
+                className="overflow-visible w-full h-[200px] md:h-auto"
               >
-                <span className="text-[9px] text-muted-foreground font-semibold uppercase tracking-wider">{hoveredDot.label}</span>
-                <span className="font-bold text-xs">{currency}{hoveredDot.value.toFixed(2)}</span>
-              </div>
-            )}
+                {/* Gradients */}
+                <defs>
+                  <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
+
+                {/* Grid Lines */}
+                {lineChartParams.gridValues.map((value) => {
+                  const ratio = value / lineChartParams.yMax
+                  const yVal = lineChartParams.paddingTop + lineChartParams.contentHeight * (1 - ratio)
+                  return (
+                    <g key={`grid-${value}`}>
+                      <line 
+                        x1={lineChartParams.paddingLeft} 
+                        y1={yVal} 
+                        x2={lineChartParams.width - 20} 
+                        y2={yVal} 
+                        className="stroke-muted-foreground/10 dark:stroke-muted-foreground/5"
+                        strokeWidth="1"
+                        strokeDasharray="4 4"
+                      />
+                      <text 
+                        x={lineChartParams.paddingLeft - 10} 
+                        y={yVal + 3.5} 
+                        textAnchor="end" 
+                        className="fill-muted-foreground/80 dark:fill-muted-foreground/50 text-[10px] font-medium"
+                      >
+                        {currency}{value}
+                      </text>
+                    </g>
+                  )
+                })}
+
+                {/* Area Gradient Fill */}
+                {lineChartParams.areaPath && (
+                  <path 
+                    d={lineChartParams.areaPath} 
+                    fill="url(#areaGradient)" 
+                    className="transition-all duration-500"
+                  />
+                )}
+
+                {/* Line Stroke */}
+                {lineChartParams.linePath && (
+                  <path 
+                    d={lineChartParams.linePath} 
+                    fill="none" 
+                    stroke="var(--primary)" 
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="transition-all duration-500"
+                  />
+                )}
+
+                {/* Hover vertical helper line */}
+                {hoveredDot && (
+                  <line 
+                    x1={hoveredDot.x}
+                    y1={lineChartParams.paddingTop}
+                    x2={hoveredDot.x}
+                    y2={lineChartParams.paddingTop + lineChartParams.contentHeight}
+                    className="stroke-primary/40 dark:stroke-primary/30"
+                    strokeWidth="1.5"
+                    strokeDasharray="4 4"
+                  />
+                )}
+
+                {/* Data Dots */}
+                {lineChartParams.points.map((p, idx) => {
+                  const isHovered = hoveredDot?.label === p.label
+                  return (
+                    <g key={`point-${idx}`}>
+                      <circle
+                        cx={p.x}
+                        cy={p.y}
+                        r={isHovered ? "6.5" : "4.5"}
+                        fill="var(--primary)"
+                        stroke="var(--background)"
+                        strokeWidth="2.5"
+                        className="pointer-events-none transition-all duration-200"
+                      />
+                      {/* X Axis Labels */}
+                      <text
+                        x={p.x}
+                        y={lineChartParams.height - 15}
+                        textAnchor="middle"
+                        className="fill-muted-foreground/90 dark:fill-muted-foreground/60 text-[10px] font-bold"
+                      >
+                        {p.label}
+                      </text>
+                    </g>
+                  )
+                })}
+
+                {/* Large Invisible Hover Overlay Targets */}
+                {lineChartParams.points.map((p, idx) => (
+                  <circle
+                    key={`hover-target-${idx}`}
+                    cx={p.x}
+                    cy={p.y}
+                    r="20"
+                    fill="transparent"
+                    className="cursor-pointer"
+                    onMouseEnter={() => setHoveredDot(p)}
+                    onMouseLeave={() => setHoveredDot(null)}
+                  />
+                ))}
+              </svg>
+
+              {/* Custom Interactive Floating Tooltip */}
+              {hoveredDot && (
+                <div 
+                  className="absolute z-20 pointer-events-none bg-popover/95 backdrop-blur-sm border shadow-lg px-2.5 py-1.5 rounded-md text-[11px] text-popover-foreground transition-all duration-150 ease-out flex flex-col font-medium"
+                  style={{
+                    left: `calc(${(hoveredDot.x / lineChartParams.width) * 100}% - 45px)`,
+                    top: `calc(${(hoveredDot.y / lineChartParams.height) * 100}% - 55px)`
+                  }}
+                >
+                  <span className="text-[9px] text-muted-foreground font-semibold uppercase tracking-wider">{hoveredDot.label}</span>
+                  <span className="font-bold text-xs">{currency}{hoveredDot.value.toFixed(2)}</span>
+                </div>
+              )}
+            </div>
           </div>
 
         </CardContent>
