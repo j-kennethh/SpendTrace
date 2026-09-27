@@ -34,7 +34,7 @@ export default function TransactionList({
     currency?: string
 }) {
     const [currentPage, setCurrentPage] = useState(1)
-    const ITEMS_PER_PAGE = 5
+    const ITEMS_PER_PAGE = 10
 
     // Calculate pagination
     const totalPages = Math.ceil(expenses.length / ITEMS_PER_PAGE)
