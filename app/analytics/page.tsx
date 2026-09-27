@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Header from "../../components/Header"
 import AnalyticsClient from '../../components/AnalyticsClient'
+import { getCategories, getRangeExpenses } from '@/lib/supabase/queries'
 
 export default async function AnalyticsPage(props: { searchParams: Promise<{ date?: string }> }) {
   const searchParams = await props.searchParams
@@ -35,21 +36,11 @@ export default async function AnalyticsPage(props: { searchParams: Promise<{ dat
   const startOf6MonthsStr = `${startOf6MonthsDate.getFullYear()}-${String(startOf6MonthsDate.getMonth() + 1).padStart(2, '0')}-01`
   const startOfNextMonthStr = `${startOfNextMonthDate.getFullYear()}-${String(startOfNextMonthDate.getMonth() + 1).padStart(2, '0')}-01`
 
-  // 4. Fetch Categories
-  const { data: categories } = await supabase
-    .from('categories')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('sort_order', { ascending: true })
-
-  // 5. Fetch Expenses for the past 6 months (up to next month start)
-  const { data: expenses } = await supabase
-    .from('expenses')
-    .select('*')
-    .eq('user_id', user.id)
-    .gte('date', startOf6MonthsStr)
-    .lt('date', startOfNextMonthStr)
-    .order('date', { ascending: true })
+  // 4. Fetch categories and 6-month expenses in parallel
+  const [categories, expenses] = await Promise.all([
+    getCategories(user.id),
+    getRangeExpenses(user.id, startOf6MonthsStr, startOfNextMonthStr),
+  ])
 
   const currency = user.user_metadata.currency_symbol || '$'
 
@@ -61,8 +52,8 @@ export default async function AnalyticsPage(props: { searchParams: Promise<{ dat
       <Header user={user} currency={currency} currentMonth={currentMonthDate} activeTab="analytics" />
       <main className="p-6 space-y-6">
         <AnalyticsClient
-          expenses={expenses || []}
-          categories={categories || []}
+          expenses={expenses}
+          categories={categories}
           currency={currency}
           selectedMonthISO={currentMonthISO}
         />

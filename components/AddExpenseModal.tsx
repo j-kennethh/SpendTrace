@@ -52,7 +52,7 @@ export default function AddExpenseModal({ categories, currency = '$' }: { catego
         </div>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px]" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>Add New Expense</DialogTitle>
         </DialogHeader>

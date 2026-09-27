@@ -1,6 +1,6 @@
 # SpendTrace
 
-SpendTrace is a sleek, modern, mobile-first personal finance and expense tracking application built using Next.js 16 (React 19) and Supabase. It enables users to set custom budgets, log individual expenses, and visualize spending habits over time with interactive charts.
+SpendTrace is a sleek, modern, mobile-first personal finance and expense tracking application built using Next.js 16 (React 19) and Supabase. It empowers users to define custom monthly budgets, effortlessly log and manage expenses, filter and sort transactions, and gain actionable spending insights through interactive, zero-dependency SVG charts.
 
 **Live Demo:** [https://spendtrace.vercel.app](https://spendtrace.vercel.app)
 
@@ -8,43 +8,100 @@ SpendTrace is a sleek, modern, mobile-first personal finance and expense trackin
 
 ## Key Features
 
-### 📊 Dashboard & Monthly Budgets
-- **Total Spend Overview**: A hero card showing current monthly spend against overall category budgets with smooth, color-coded progress bars (green/primary, warning yellow at 80%, and destructive red when over budget).
-- **Manage Categories**: Create, edit, and delete custom budget categories (up to 5 categories max). Seed defaults ("Food", "Transport", "Leisure") instantly if starting fresh.
-- **Drag & Drop Organization**: Seamlessly reorder your budget categories with smooth drag-and-drop animations powered by `@dnd-kit`.
-- **Expense Logging**: Easily add, edit, or delete transactions with custom descriptions, amounts, and dates.
+### 📊 Dashboard & Budget Management
+- **Total Spend Overview**: A dynamic hero card displaying real-time monthly spending against total budget limits, complete with an animated progress bar that transitions from brand color to yellow (at 80% capacity) and destructive red (when over budget).
+- **Interactive Month Navigation**: Travel back and forth across past and upcoming months using the header `MonthPicker`. Selected dates persist across page navigation via URL query parameters (`?date=YYYY-MM`).
+- **Category Budgets**: Create, edit, and delete budget categories with custom names, icons/emojis, and monthly target limits.
+- **Category Limit Guard**: Enforces a strict 5-category maximum both on the client and server to keep budgeting focused and intentional.
+- **Drag & Drop Reordering**: Seamlessly reorder categories with smooth animations powered by `@dnd-kit`, persisting custom sort orders in PostgreSQL.
+- **Quick-Start Seed Defaults**: One-click seeding of default budget categories ("Food 🍴", "Transport 🚌", "Leisure 🎉") for immediate onboarding.
+- **Expense Logging**: Add expenses on the fly using either the floating action button (FAB) or section trigger, with custom descriptions, amounts, categories, and dates.
 
-### 📈 Interactive Analytics
-- **Category Breakdown Pie Chart**: An interactive SVG pie chart rendering color-coded categories, percentage distributions, and dynamic hover/touch tooltips. Includes automatic grouping for "Uncategorized" expenses.
-- **Daily Spending Heatmap**: A contribution-style grid tracking daily expenditure levels across the month. Hovering or tapping any day displays a localized tooltip of the date and spend total.
-- **6-Month Spending Trend Chart**: A responsive area line-chart mapping spending history over the last 6 months with custom interactive tooltips.
+### 🔍 Advanced Transaction Management
+- **Multi-Criteria Filtering**: Filter transaction records by specific category (including "Uncategorized" detections) and custom date ranges (From / To).
+- **Multi-Field Sorting**: Instantly sort transactions by **Date** or **Amount** in ascending or descending order.
+- **Responsive Toolbar Architecture**:
+  - **Desktop (`md+`)**: Standardized, unified single-row toolbar featuring explicit `Filter:` and `Sort:` labels, uniform control heights, inline "Clear" button, and active result counts.
+  - **Mobile**: Minimalist header row with result counter and a dedicated "Filter & Sort" trigger button with an active indicator badge that opens a responsive dialog popup.
+- **Paginated List**: Built-in 5-items-per-page pagination with automatic page reset upon filter or sort change, plus context-aware empty states.
+- **Safe Transaction Actions**: Inline dropdown menus to edit transaction details or delete expenses with confirmation dialogs.
 
-### ⚙️ User Settings & Personalization
-- **Currency Preferences**: Select your preferred currency symbol (`$`, `€`, `£`, `¥`, `₩`, `₱`) in user settings to update all figures app-wide instantly.
-- **Custom Profile Names**: Modify your display name directly from the settings drawer, which dynamically updates the mobile menu and desktop headers.
-- **Light & Dark Mode**: Fully responsive dark/light mode synchronization using `next-themes` and CSS variables.
-- **Secure Authentication**: Built-in user sign-up, sign-in, and sign-out pipelines via Supabase Auth.
+### 📈 Interactive Visualizations & Analytics
+- **Category Breakdown Pie Chart**: Zero-dependency, pure SVG pie chart with dynamic slice geometry, custom color palette, percentage breakdowns, and hover/touch tooltips. Uncategorized spending is automatically grouped.
+- **Daily Spending Heatmap**: A GitHub-inspired monthly calendar contribution grid tracking expenditure intensity across 5 color-density levels, featuring localized date and amount tooltips.
+- **6-Month Spending Trend Chart**: Responsive SVG area and line chart mapping spending trajectory over the preceding 6 months leading up to the selected month, complete with auto-scaling gridlines and interactive data points.
+
+### ⚙️ User Settings & Customization
+- **Currency Preferences**: Toggle between global currency formats (`$`, `€`, `£`, `¥`, `₩`, `₱`) in user settings to dynamically format all financial values app-wide.
+- **Profile Management**: Update your display name with immediate sync across navigation bars and mobile drawer headers.
+- **Theme Support**: Seamless Light, Dark, and System appearance toggles powered by `next-themes` and CSS variables.
+- **Secure Authentication**: Built-in email/password registration with verification links, along with one-click Google OAuth authentication via Supabase Auth and session-protecting proxy routing.
 
 ---
 
 ## Tech Stack
 
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Server Actions, React 19)
-- **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL client-side SSR, RLS-protected tables)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) with custom animations and Radix UI elements
-- **Interactions**: [@dnd-kit/core](https://dndkit.com/) & [@dnd-kit/sortable](https://dndkit.com/) (Drag-and-Drop)
-- **Time Handling**: [date-fns](https://date-fns.org/)
-- **Icons**: [Lucide React](https://lucide.dev/)
+| Layer | Technology |
+|---|---|
+| **Framework** | [Next.js 16](https://nextjs.org/) (App Router, Server Actions, React 19) |
+| **Backend & DB** | [Supabase](https://supabase.com/) (PostgreSQL, Row-Level Security, Auth) |
+| **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) with PostCSS & CSS variables |
+| **UI Components** | [Radix UI](https://www.radix-ui.com/) Primitives & [shadcn/ui](https://ui.shadcn.com/) patterns |
+| **Drag & Drop** | [@dnd-kit/core](https://dndkit.com/) & [@dnd-kit/sortable](https://dndkit.com/) |
+| **Date Utilities** | [date-fns v4](https://date-fns.org/) |
+| **Icons** | [Lucide React](https://lucide.dev/) |
+| **Theme Engine** | [next-themes](https://github.com/pacocoursey/next-themes) |
 
 ---
 
-## Getting Started
+## Project Structure
 
-### Prerequisites
-Make sure you have [Node.js](https://nodejs.org/) (v18+) and npm installed, as well as a [Supabase](https://supabase.com/) account.
+```text
+spendtrace/
+├── app/
+│   ├── actions.ts              # Server actions (categories, expenses, profile)
+│   ├── analytics/              # Analytics page route
+│   │   └── page.tsx            # Server-rendered 6-month analytics loader
+│   ├── auth/                   # Auth handlers (OAuth callback, signout)
+│   │   ├── callback/route.ts   # Exchange OAuth code for session
+│   │   └── signout/route.ts    # Session destruction endpoint
+│   ├── login/                  # Authentication page (Email/password & Google)
+│   │   └── page.tsx
+│   ├── globals.css             # Tailwind v4 theme variables and base styling
+│   ├── layout.tsx              # Root HTML shell & ThemeProvider
+│   └── page.tsx                # Main dashboard page (month budget overview)
+├── components/
+│   ├── ui/                     # Radix UI primitives (dialog, select, popover, etc.)
+│   ├── AddExpenseModal.tsx     # Floating / inline expense creation modal
+│   ├── AnalyticsClient.tsx     # Client analytics (SVG Pie, Heatmap, Trend line)
+│   ├── CategoryCard.tsx        # Budget card with progress indicator & options
+│   ├── CategoryList.tsx        # Dnd-kit drag-and-drop sortable category container
+│   ├── ConfirmModal.tsx        # Reusable alert confirmation dialog
+│   ├── CreateCategoryModal.tsx # New category creation modal with 5-item cap
+│   ├── Footer.tsx              # Application footer
+│   ├── Header.tsx              # Navigation bar, MonthPicker, tabs & user drawer
+│   ├── ModeToggle.tsx          # Light/dark mode toggle
+│   ├── MonthPicker.tsx         # Popover year/month picker synced to URL state
+│   ├── SettingsModal.tsx       # Profile name, currency, and theme settings
+│   ├── SortableCategoryItem.tsx# Dnd-kit sortable wrapper component
+│   ├── theme-provider.tsx      # NextThemes wrapper
+│   ├── TransactionItem.tsx     # Transaction row with inline edit & delete
+│   └── TransactionList.tsx     # Filter, sort, pagination, and transaction listing
+├── lib/
+│   ├── supabase/
+│   │   ├── client.ts           # Browser Supabase client
+│   │   ├── queries.ts          # Server database query helpers
+│   │   └── server.ts           # Server component / action Supabase client
+│   └── utils.ts                # Tailwind class merge utility (cn)
+├── proxy.ts                    # Edge session check & path proxy
+└── README.md
+```
 
-### Database Setup (Supabase)
-Run the following SQL scripts in your Supabase SQL editor to create the database schema:
+---
+
+## Database Setup (Supabase)
+
+SpendTrace relies on Supabase PostgreSQL with Row Level Security (RLS) enabled. Run the following SQL queries in your Supabase SQL Editor:
 
 ```sql
 -- 1. Create categories table
@@ -60,6 +117,7 @@ create table categories (
 
 -- Enable RLS and create policy for categories
 alter table categories enable row level security;
+
 create policy "Users can manage their own categories" on categories
   for all using (auth.uid() = user_id);
 
@@ -76,15 +134,26 @@ create table expenses (
 
 -- Enable RLS and create policy for expenses
 alter table expenses enable row level security;
+
 create policy "Users can manage their own expenses" on expenses
   for all using (auth.uid() = user_id);
 ```
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18.17+ or v20+)
+- npm, pnpm, or yarn
+- A free [Supabase](https://supabase.com/) account and project
 
 ### Installation
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/j-kennethh/SpendTrace.git
    cd spendtrace
    ```
 
@@ -94,18 +163,33 @@ create policy "Users can manage their own expenses" on expenses
    ```
 
 3. **Configure environment variables**:
-   Create a `.env.local` file in the project root:
+   Create a `.env.local` file in the root directory:
    ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
    ```
 
-4. **Start the development server**:
+4. **Enable Google OAuth (Optional)**:
+   In your Supabase project dashboard under **Authentication > Providers > Google**, add your Google Client ID and Secret. In Google Cloud Console, set your redirect URL to:
+   ```text
+   https://<your-project-ref>.supabase.co/auth/v1/callback
+   ```
+
+5. **Run the development server**:
    ```bash
    npm run dev
    ```
 
-5. Open [http://localhost:3000](http://localhost:3000) to view the application in your browser.
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## Scripts
+
+- `npm run dev` — Starts the Next.js development server with Turbopack.
+- `npm run build` — Builds the optimized production application.
+- `npm run start` — Runs the compiled production server.
+- `npm run lint` — Runs ESLint checks.
 
 ---
 

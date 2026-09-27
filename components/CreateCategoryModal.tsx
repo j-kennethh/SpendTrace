@@ -49,7 +49,7 @@ export default function CreateCategoryModal({ currency = '$', isLimitReached = f
                     New Category
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px]" aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle>Create New Category</DialogTitle>
                 </DialogHeader>

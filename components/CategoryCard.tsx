@@ -135,7 +135,7 @@ export default function CategoryCard({
       </Card>
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px]" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>Edit Category: {category.name}</DialogTitle>
           </DialogHeader>
