@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { getCategories, getMonthExpenses } from '@/lib/supabase/queries'
 import { redirect } from 'next/navigation'
 import { Card, CardContent } from "@/components/ui/card"
 import { Wallet, LogOut } from 'lucide-react'
@@ -20,15 +21,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ date?: 
     redirect('/login')
   }
 
-  // 2. Fetch Categories (Ordered by sort_order now)
-  const { data: categories } = await supabase
-    .from('categories')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('sort_order', { ascending: true })
-    .order('id', { ascending: true }) // Fallback for old categories
-
-  // 3. Fetch ALL Expenses for this month (for correct totals & client-side pagination)
+  // 2. Determine selected month
   const now = new Date()
   let currentMonthDate = now
 
@@ -42,27 +35,24 @@ export default async function Dashboard(props: { searchParams: Promise<{ date?: 
   const y = currentMonthDate.getFullYear()
   const m = currentMonthDate.getMonth()
   const startOfMonth = `${y}-${String(m + 1).padStart(2, '0')}-01`
-  
+
   const nextMonthDate = new Date(y, m + 1, 1)
   const startOfNextMonth = `${nextMonthDate.getFullYear()}-${String(nextMonthDate.getMonth() + 1).padStart(2, '0')}-01`
 
-  const { data: expenses } = await supabase
-    .from('expenses')
-    .select('*')
-    .eq('user_id', user.id)
-    .gte('date', startOfMonth)
-    .lt('date', startOfNextMonth)
-    .order('date', { ascending: false })
-    .order('id', { ascending: false })
+  // 3. Fetch categories and expenses in parallel
+  const [categories, expenses] = await Promise.all([
+    getCategories(user.id),
+    getMonthExpenses(user.id, startOfMonth, startOfNextMonth),
+  ])
 
   // --- NEW LOGIC START ---
   // 4. Calculate Totals & Group by Category
-  const totalSpent = expenses?.reduce((sum, item) => sum + Number(item.amount), 0) || 0
-  const monthlyBudget = categories?.reduce((sum, item) => sum + Number(item.monthly_budget), 0) || 0
+  const totalSpent = expenses.reduce((sum, item) => sum + Number(item.amount), 0)
+  const monthlyBudget = categories.reduce((sum, item) => sum + Number(item.monthly_budget), 0)
 
   // Create a map of { category_id: total_spent }
   const spendByCategory: Record<number, number> = {}
-  expenses?.forEach((expense) => {
+  expenses.forEach((expense) => {
     const catId = expense.category_id
     if (catId) {
       spendByCategory[catId] = (spendByCategory[catId] || 0) + Number(expense.amount)
@@ -120,11 +110,11 @@ export default async function Dashboard(props: { searchParams: Promise<{ date?: 
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold text-foreground">Budgets</h2>
-            <CreateCategoryModal currency={currency} isLimitReached={(categories?.length || 0) >= 5} />
+            <CreateCategoryModal currency={currency} isLimitReached={categories.length >= 5} />
           </div>
 
           <CategoryList
-            categories={categories || []}
+            categories={categories}
             spendByCategory={spendByCategory}
             currency={currency}
           >
@@ -150,11 +140,11 @@ export default async function Dashboard(props: { searchParams: Promise<{ date?: 
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold text-foreground">Recent Transactions</h2>
-            <AddExpenseModal categories={categories || []} currency={currency} />
+            <AddExpenseModal categories={categories} currency={currency} />
           </div>
           <TransactionList
-            expenses={expenses || []}
-            categories={categories || []}
+            expenses={expenses}
+            categories={categories}
             currency={currency}
           />
         </div>
